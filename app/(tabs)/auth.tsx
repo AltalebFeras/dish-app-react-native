@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, Platform, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 export default function Index() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -7,6 +7,7 @@ export default function Index() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [token, setToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Register form fields
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -16,10 +17,22 @@ export default function Index() {
   // Hide the page if authenticated
   if (isAuthenticated) return null;
 
+  // Helper to get correct API base URL for web, emulator, or device
+  const getApiBaseUrl = () => {
+    if (Platform.OS === "web") {
+      return "https://127.0.0.1:8000";
+    }
+    return Platform.OS === "android"
+      ? "http://10.0.2.2:8000"
+      : "http://localhost:8000";
+  };
+
   // API handlers
   const handleLogin = async () => {
+    setIsLoading(true);
     try {
-      const res = await fetch("https://127.0.0.1:8000/api/login", {
+      const apiUrl = `${getApiBaseUrl()}/api/login`;
+      const res = await fetch(apiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -30,6 +43,8 @@ export default function Index() {
       setIsAuthenticated(true);
     } catch (e) {
       Alert.alert("Login Error", "Invalid credentials or server error.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -38,8 +53,10 @@ export default function Index() {
       Alert.alert("Error", "Passwords do not match.");
       return;
     }
+    setIsLoading(true);
     try {
-      const res = await fetch("https://127.0.0.1:8000/api/register", {
+      const apiUrl = `${getApiBaseUrl()}/api/register`;
+      const res = await fetch(apiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -55,6 +72,8 @@ export default function Index() {
       setScreen("login");
     } catch (e) {
       Alert.alert("Register Error", "Registration failed.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -138,14 +157,25 @@ export default function Index() {
           style={{ borderWidth: 1, width: "100%", marginBottom: 12, padding: 8, borderRadius: 6 }}
         />
         <TouchableOpacity
-          style={{ padding: 16, backgroundColor: "#28A745", borderRadius: 8, width: "100%", marginBottom: 12 }}
+          style={{
+            padding: 16,
+            backgroundColor: "#28A745",
+            borderRadius: 8,
+            width: "100%",
+            marginBottom: 12,
+            opacity: isLoading ? 0.6 : 1,
+          }}
           onPress={handleRegister}
+          disabled={isLoading}
         >
-          <Text style={{ color: "#FFF", textAlign: "center" }}>Register</Text>
+          <Text style={{ color: "#FFF", textAlign: "center" }}>
+            {isLoading ? "Registering..." : "Register"}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={{ padding: 16, backgroundColor: "#007BFF", borderRadius: 8, width: "100%" }}
           onPress={() => setScreen("login")}
+          disabled={isLoading}
         >
           <Text style={{ color: "#FFF", textAlign: "center" }}>Back to Login</Text>
         </TouchableOpacity>

@@ -35,12 +35,12 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="cart"
+        name="task"
         options={{
-          title: 'Cart',
-          headerTitle: 'Your Cart',
+          title: 'Tasks',
+          headerTitle: 'Your Tasks',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="cart" size={size} color={color} />
+            <Ionicons name="book" size={size} color={color} />
           ),
         }}
       />
