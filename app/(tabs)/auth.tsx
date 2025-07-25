@@ -18,20 +18,13 @@ export default function Index() {
   if (isAuthenticated) return null;
 
   // Helper to get correct API base URL for web, emulator, or device
-  const getApiBaseUrl = () => {
-    if (Platform.OS === "web") {
-      return "https://127.0.0.1:8000";
-    }
-    return Platform.OS === "android"
-      ? "http://10.0.2.2:8000"
-      : "http://localhost:8000";
-  };
+  const getApiBaseUrl = 'http://192.168.1.59:8000/api';
 
   // API handlers
   const handleLogin = async () => {
     setIsLoading(true);
     try {
-      const apiUrl = `${getApiBaseUrl()}/api/login`;
+      const apiUrl = `${getApiBaseUrl}/login`;
       const res = await fetch(apiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -55,7 +48,7 @@ export default function Index() {
     }
     setIsLoading(true);
     try {
-      const apiUrl = `${getApiBaseUrl()}/api/register`;
+      const apiUrl = `${getApiBaseUrl}/register`;
       const res = await fetch(apiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
