@@ -12,8 +12,7 @@ export default function TabLayout() {
           backgroundColor: Colors.light.background,
           borderTopWidth: 1,
           borderTopColor: Colors.light.border,
-          height: 60,
-          paddingBottom: 80,
+          height: 120,  
           paddingTop: 8,
         },
         headerStyle: {
@@ -65,6 +64,20 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="dish-detail"
+        options={{
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: Colors.light.primary,
+          },
+          headerTintColor: Colors.light.textWhite,
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}
+      />
     </Tabs>
+
   );
 }

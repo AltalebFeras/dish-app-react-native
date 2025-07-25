@@ -1,40 +1,31 @@
-// API service for fetching dishes data
-// This is a mock implementation. Replace with real API calls as needed.
-
 import { Dish } from "@/types/dish";
 
-const mockDishes: Dish[] = [
-  {
-    id: '1',
-    name: 'Spaghetti Carbonara',
-    category: 'Pasta',
-    description: 'Classic Italian pasta with creamy sauce and pancetta.',
-    price: { amount: 12, currency: 'USD' },
-    thumbnailUrl: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836',
-    images: [],
-    ingredients: ['Spaghetti', 'Eggs', 'Pancetta', 'Parmesan', 'Pepper'],
-  },
-  {
-    id: '2',
-    name: 'Margherita Pizza',
-    category: 'Pizza',
-    description: 'Traditional pizza with tomato, mozzarella, and basil.',
-    price: { amount: 10, currency: 'USD' },
-    thumbnailUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591',
-    images: [],
-    ingredients: ['Dough', 'Tomato', 'Mozzarella', 'Basil'],
-  },
-  // Add more mock dishes as needed
-];
+const API_BASE_URL = 'https://687ce272918b6422433059ae.mockapi.io/api/v1';
 
 export const dishesApi = {
-  getAllDishes: async (): Promise<Dish[]> => {
-    // Simulate network delay
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    return mockDishes;
+  async getAllDishes(): Promise<Dish[]> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/dishes`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch dishes');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching dishes:', error);
+      throw error;
+    }
   },
-  getDishById: async (id: string): Promise<Dish | null> => {
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    return mockDishes.find((dish) => dish.id === id) || null;
-  },
+
+  async getDishById(id: string): Promise<Dish> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/dishes/${id}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch dish');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching dish:', error);
+      throw error;
+    }
+  }
 };
