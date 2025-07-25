@@ -1,6 +1,6 @@
+import { Dish } from "@/types/dish";
 import { Link } from "expo-router";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Dish } from "../types/dish";
 
 interface DishCardProps {
   dish: Dish;

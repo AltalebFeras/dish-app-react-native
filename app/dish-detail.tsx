@@ -8,7 +8,7 @@ import {
     Text,
     View
 } from 'react-native';
-import { dishesApi } from '../services/api';
+import { dishesApi } from './services/api';
 import { Dish } from '../types/dish';
 import { Colors } from '@/constants/Colors';
 

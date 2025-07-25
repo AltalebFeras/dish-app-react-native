@@ -9,8 +9,8 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
-import { dishesApi } from "../services/api";
-import { Dish } from "../types/dish";
+import { dishesApi } from "./services/api";
+import { Dish } from "@/types/dish";
 
 export default function Index() {
   const [dishes, setDishes] = useState<Dish[]>([]);

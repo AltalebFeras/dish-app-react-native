@@ -10,9 +10,9 @@ import {
 } from "react-native";
 
 import DishCard from "../../components/DishCard";
-import { dishesApi } from "../../services/api";
-import { Dish } from "../../types/dish";
+import { dishesApi } from "../services/api";
 import { Colors } from "@/constants/Colors";
+import { Dish } from "@/types/dish";
 
 
 export default function Index() {
