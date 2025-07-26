@@ -4,6 +4,11 @@ import { useState } from "react";
 import { Alert } from "react-native";
 import * as authService from "../services/authService";
 
+// Helper to get token from SecureStore
+export const getToken = async (): Promise<string | null> => {
+  return await SecureStore.getItemAsync("token");
+};
+
 export default function useAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [screen, setScreen] = useState<"login" | "register" | "forgot">("login");
@@ -29,7 +34,14 @@ export default function useAuth() {
       // Navigate to Task screen (assuming route is '/task')
       router.replace("/task");
     } catch (e: any) {
-      setError(e?.message || "Invalid credentials or server error.");
+      // Handle error object with code/message or string
+      if (e?.message) {
+        setError(e.message);
+      } else if (typeof e === "string") {
+        setError(e);
+      } else {
+        setError("Invalid credentials or server error.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -43,12 +55,35 @@ export default function useAuth() {
     setIsLoading(true);
     setError(null);
     try {
-      await authService.register(email, password, confirmPassword, firstName, lastName);
+      const data = await authService.register(email, password, confirmPassword, firstName, lastName);
+      console.log("Registration response:", data);
+
+      // Handle API response with { success: false, message: ..., errors: {...} }
+      if (data && data.success == 'false') {
+        let errorMsg = data.message ;
+        if (data.errors) {
+          // Collect all field errors
+          const fieldErrors = Object.values(data.errors)
+            .filter(Boolean)
+            .map((v) => String(v));
+          if (fieldErrors.length > 0) {
+            errorMsg += "\n" + fieldErrors.join("\n");
+          }
+        }
+        setError(errorMsg);
+        return;
+      }
       // Registration successful, redirect to login
       setScreen("login");
       setError(null);
     } catch (e: any) {
-      setError(e?.message || "Registration failed.");
+      if (e?.message) {
+        setError(e.message);
+      } else if (typeof e === "string") {
+        setError(e);
+      } else {
+        setError("Registration failed.");
+      }
     } finally {
       setIsLoading(false);
     }

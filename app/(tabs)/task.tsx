@@ -1,59 +1,61 @@
-import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Text, View } from 'react-native';
-import { tasksApi } from '../services/api';
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, FlatList, Text, View } from "react-native";
+import { getAllTasks } from "../services/taskService";
 
-type Task = {
-  title: string;
-  description: string;
-  deadline: string;
-  is_deleted: boolean;
-  categories: { name: string }[];
-  created_at: string;
-  updated_at: string;
-  status: { name: string };
-  user: any;
-};
-
-const TaskScreen = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
+export default function TaskScreen() {
+  const [tasks, setTasks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    tasksApi.getAllTasks()
-      .then(setTasks)
-      .catch(err => setError(err.message))
-      .finally(() => setLoading(false));
+    const fetchTasks = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getAllTasks();
+        setTasks(data);
+      } catch (e: any) {
+        // Show API error message if present
+        if (e?.message) setError(e.message);
+        else setError("Failed to load tasks");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTasks();
   }, []);
 
-  if (loading) {
-    return <ActivityIndicator />;
-  }
-
-  if (error) {
-    return <Text>Error: {error}</Text>;
-  }
+  if (loading)
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator />
+        <Text>Loading tasks...</Text>
+      </View>
+    );
+  if (error)
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text style={{ color: "red", textAlign: "center" }}>{error}</Text>
+      </View>
+    );
+  if (!tasks || tasks.length === 0)
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>No tasks found.</Text>
+      </View>
+    );
 
   return (
     <View style={{ flex: 1, padding: 16 }}>
       <FlatList
         data={tasks}
-        keyExtractor={(_, idx) => idx.toString()}
+        keyExtractor={(item) => item.id?.toString() || Math.random().toString()}
         renderItem={({ item }) => (
-          <View style={{ marginBottom: 16, padding: 12, backgroundColor: '#f0f0f0', borderRadius: 8 }}>
-            <Text style={{ fontWeight: 'bold' }}>{item.title}</Text>
-            <Text>{item.description}</Text>
-            <Text>Status: {item.status?.name}</Text>
-            <Text>Deadline: {item.deadline}</Text>
-            <Text>Categories: {item.categories?.map((c: any) => c.name).join(', ')}</Text>
-            <Text>Deleted: {item.is_deleted ? 'Yes' : 'No'}</Text>
-            <Text>Created: {item.created_at}</Text>
-            <Text>Updated: {item.updated_at}</Text>
+          <View style={{ padding: 12, borderBottomWidth: 1, borderColor: "#eee" }}>
+            <Text>{item.title}</Text>
           </View>
         )}
       />
     </View>
   );
-};
-
-export default TaskScreen;
+}
