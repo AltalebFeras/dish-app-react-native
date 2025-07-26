@@ -31,6 +31,9 @@ export default function useAuth() {
       if (data.token) {
         await SecureStore.setItemAsync("token", data.token);
       }
+      if (data.refresh_token) {
+        await SecureStore.setItemAsync("refresh_token", data.refresh_token);
+      }
       // Navigate to Task screen (assuming route is '/task')
       router.replace("/task");
     } catch (e: any) {

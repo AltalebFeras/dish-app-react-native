@@ -93,21 +93,3 @@ export async function register(
   }
   return errorData || res.json();
 }
-
-export const tasksApi = {
-  async getAllTasks() {
-    try {
-      const response = await fetch(`${API_BASE_URL}/tasks`);
-      const json = await response.json();
-
-      if (json.success == true) {
-        return json.data;
-      } else {
-        throw new Error(json.message || "Failed to fetch tasks");
-      }
-    } catch (error) {
-      console.error("Error fetching tasks:", error);
-      throw error;
-    }
-  },
-};
