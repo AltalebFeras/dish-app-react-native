@@ -5,7 +5,7 @@ export async function getAllTasks() {
   const token = await getToken();
   if (!token) throw { code: 401, message: "Invalid credentials." };
 
-  const response = await fetch(`${API_BASE_URL}/taskss`, {
+  const response = await fetch(`${API_BASE_URL}/tasks`, {
     headers: {
       "Authorization": `Bearer ${token}`,
       "Content-Type": "application/json",
