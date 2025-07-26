@@ -56,27 +56,11 @@ export default function useAuth() {
     setError(null);
     try {
       const data = await authService.register(email, password, confirmPassword, firstName, lastName);
-      console.log("Registration response:", data);
-
-      // Handle API response with { success: false, message: ..., errors: {...} }
-      if (data && data.success == 'false') {
-        let errorMsg = data.message ;
-        if (data.errors) {
-          // Collect all field errors
-          const fieldErrors = Object.values(data.errors)
-            .filter(Boolean)
-            .map((v) => String(v));
-          if (fieldErrors.length > 0) {
-            errorMsg += "\n" + fieldErrors.join("\n");
-          }
-        }
-        setError(errorMsg);
-        return;
-      }
       // Registration successful, redirect to login
       setScreen("login");
       setError(null);
     } catch (e: any) {
+      // Try to extract all error messages
       if (e?.message) {
         setError(e.message);
       } else if (typeof e === "string") {

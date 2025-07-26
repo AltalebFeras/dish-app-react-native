@@ -28,26 +28,57 @@ export async function register(
       last_name: lastName,
     }),
   });
-  if (!res.ok) throw new Error("Register failed");
-  return res.json();
+
+  let errorMessage = "An unexpected error occurred. Please try again later.";
+  let errorData: any = null;
+  try {
+    errorData = await res.clone().json();
+  } catch {
+    // ignore JSON parse errors
+  }
+
+  if (!res.ok) {
+    if (errorData && errorData.message) {
+      errorMessage = errorData.message;
+      // Optionally append field errors if present
+      if (errorData.errors) {
+        const fieldErrors = Object.values(errorData.errors)
+          .filter(Boolean)
+          .map((v) => String(v));
+        if (fieldErrors.length > 0) {
+          errorMessage += "\n" + fieldErrors.join("\n");
+        }
+      }
+    } else if (res.status === 400) {
+      errorMessage = "Bad Request: Please check your input.";
+    } else if (res.status === 401) {
+      errorMessage = "Unauthorized: Invalid credentials.";
+    } else if (res.status === 403) {
+      errorMessage = "Forbidden: You do not have permission to access this resource.";
+    } else if (res.status === 404) {
+      errorMessage = "Not Found: The requested resource could not be found.";
+    } else if (res.status === 409) {
+      errorMessage = "Conflict: The email is already registered.";
+    }
+    throw new Error(errorMessage);
+  }
+  return errorData || res.json();
 }
-
-
 
 export const tasksApi = {
   async getAllTasks() {
     try {
       const response = await fetch(`${API_BASE_URL}/tasks`);
       const json = await response.json();
-      
+
       if (json.success == true) {
         return json.data;
       } else {
-        throw new Error(json.message || 'Failed to fetch tasks');
+        throw new Error(json.message || "Failed to fetch tasks");
       }
     } catch (error) {
-      console.error('Error fetching tasks:', error);
+      console.error("Error fetching tasks:", error);
       throw error;
     }
-  }
+  },
 };
