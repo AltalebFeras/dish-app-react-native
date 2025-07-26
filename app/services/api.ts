@@ -30,24 +30,3 @@ export const dishesApi = {
   }
 };
 
-
-// const API_BASE_URL_TASKS = 'https://127.0.0.1:8000/api';
-const API_BASE_URL_TASKS = 'http://192.168.1.59:8000/api';
-
-export const tasksApi = {
-  async getAllTasks() {
-    try {
-      const response = await fetch(`${API_BASE_URL_TASKS}/tasks`);
-      const json = await response.json();
-      
-      if (json.success == true) {
-        return json.data;
-      } else {
-        throw new Error(json.message || 'Failed to fetch tasks');
-      }
-    } catch (error) {
-      console.error('Error fetching tasks:', error);
-      throw error;
-    }
-  }
-};
