@@ -6,10 +6,39 @@ export async function login(email: string, password: string) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
   });
-  if (!res.ok) throw new Error("Login failed");
-  return res.json();
-}
+   let errorMessage = "An unexpected error occurred. Please try again later.";
+  let errorData: any = null;
+  try {
+    errorData = await res.clone().json();
+  } catch {
+    // ignore JSON parse errors
+  }
 
+  if (!res.ok) {
+    if (errorData && errorData.message) {
+      errorMessage = errorData.message;
+      // Optionally append field errors if present
+      if (errorData.errors) {
+        const fieldErrors = Object.values(errorData.errors)
+          .filter(Boolean)
+          .map((v) => String(v));
+        if (fieldErrors.length > 0) {
+          errorMessage += "\n" + fieldErrors.join("\n");
+        }
+      }
+    } else if (res.status === 400) {
+      errorMessage = "Bad Request: Please check your input.";
+    } else if (res.status === 401) {
+      errorMessage = "Unauthorized: Invalid credentialss.";
+    } else if (res.status === 403) {
+      errorMessage = "Forbidden: You do not have permission to access this resource.";
+    } else if (res.status === 404) {
+      errorMessage = "Not Found: The requested resource could not be found.";
+    }
+    throw new Error(errorMessage);
+  }
+  return errorData || res.json();
+}
 export async function register(
   email: string,
   password: string,
