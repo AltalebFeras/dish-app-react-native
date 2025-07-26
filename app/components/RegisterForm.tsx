@@ -15,6 +15,7 @@ export default function RegisterForm({
   onRegister,
   onBackToLogin,
   isLoading,
+  error,
 }: any) {
   return (
     <View style={{ padding: 16, alignItems: "center" }}>
@@ -53,6 +54,7 @@ export default function RegisterForm({
         secureTextEntry
         style={{ borderWidth: 1, width: "100%", marginBottom: 12, padding: 8, borderRadius: 6 }}
       />
+      {error && <Text style={{ color: "red", marginBottom: 8 }}>{error}</Text>}
       <TouchableOpacity
         style={{
           padding: 16,

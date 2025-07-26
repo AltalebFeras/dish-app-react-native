@@ -1,3 +1,5 @@
+import { useRouter } from "expo-router";
+import * as SecureStore from "expo-secure-store";
 import { useState } from "react";
 import { Alert } from "react-native";
 import * as authService from "../services/authService";
@@ -11,19 +13,23 @@ export default function useAuth() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const router = useRouter();
 
   const handleLogin = async () => {
     setIsLoading(true);
+    setError(null);
     try {
       const data = await authService.login(email, password);
       setIsAuthenticated(true);
-      token: data.token
-        // Store token in secure storage or context
-        // Navigate to the main app screen
-        
-        Alert.alert("Success", "Login successful!");
-    } catch (e) {
-      Alert.alert("Login Error", "Invalid credentials or server error.");
+      if (data.token) {
+        await SecureStore.setItemAsync("token", data.token);
+      }
+      // Navigate to Task screen (assuming route is '/task')
+      router.replace("/task");
+    } catch (e: any) {
+      setError(e?.message || "Invalid credentials or server error.");
     } finally {
       setIsLoading(false);
     }
@@ -31,16 +37,18 @@ export default function useAuth() {
 
   const handleRegister = async () => {
     if (password !== confirmPassword) {
-      Alert.alert("Error", "Passwords do not match.");
+      setError("Passwords do not match.");
       return;
     }
     setIsLoading(true);
+    setError(null);
     try {
       await authService.register(email, password, confirmPassword, firstName, lastName);
-      Alert.alert("Success", "Registration successful. Please log in.");
+      // Registration successful, redirect to login
       setScreen("login");
-    } catch (e) {
-      Alert.alert("Register Error", "Registration failed.");
+      setError(null);
+    } catch (e: any) {
+      setError(e?.message || "Registration failed.");
     } finally {
       setIsLoading(false);
     }
@@ -50,6 +58,7 @@ export default function useAuth() {
     Alert.alert("Reset", "Password reset link sent (mock).");
   };
 
+  // Expose error and navigation helpers
   return {
     isAuthenticated,
     screen,
@@ -65,6 +74,7 @@ export default function useAuth() {
     lastName,
     setLastName,
     isLoading,
+    error,
     handleLogin,
     handleRegister,
     handleForgotPassword,

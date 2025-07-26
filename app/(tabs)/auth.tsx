@@ -1,9 +1,9 @@
 import React from "react";
 import { View } from "react-native";
-import LoginForm from "../components/LoginForm";
-import useAuth from "../hooks/useAuth";
-import RegisterForm from "../components/RegisterForm";
 import ForgotPasswordForm from "../components/ForgotPasswordForm";
+import LoginForm from "../components/LoginForm";
+import RegisterForm from "../components/RegisterForm";
+import useAuth from "../hooks/useAuth";
 
 export default function Index() {
   const {
@@ -21,6 +21,7 @@ export default function Index() {
     lastName,
     setLastName,
     isLoading,
+    error,
     handleLogin,
     handleRegister,
     handleForgotPassword,
@@ -40,6 +41,7 @@ export default function Index() {
         onGoToRegister={() => setScreen("register")}
         onGoToForgot={() => setScreen("forgot")}
         isLoading={isLoading}
+        error={error}
       />
     );
   } else if (screen === "register") {
@@ -58,6 +60,7 @@ export default function Index() {
         onRegister={handleRegister}
         onBackToLogin={() => setScreen("login")}
         isLoading={isLoading}
+        error={error}
       />
     );
   } else if (screen === "forgot") {

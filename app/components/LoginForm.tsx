@@ -10,6 +10,7 @@ export default function LoginForm({
   onGoToRegister,
   onGoToForgot,
   isLoading,
+  error,
 }: any) {
   return (
     <View style={{ padding: 16, alignItems: "center" }}>
@@ -29,6 +30,7 @@ export default function LoginForm({
         secureTextEntry
         style={{ borderWidth: 1, width: "100%", marginBottom: 12, padding: 8, borderRadius: 6 }}
       />
+      {error && <Text style={{ color: "red", marginBottom: 8 }}>{error}</Text>}
       <TouchableOpacity
         style={{ padding: 16, backgroundColor: "#007BFF", borderRadius: 8, width: "100%", marginBottom: 12, opacity: isLoading ? 0.6 : 1 }}
         onPress={onLogin}
