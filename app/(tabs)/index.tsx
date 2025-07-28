@@ -1,12 +1,13 @@
+import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    FlatList,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput, TouchableOpacity,
-    View,
+  ActivityIndicator,
+  FlatList,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput, TouchableOpacity,
+  View,
 } from "react-native";
 
 import { Colors } from "@/constants/Colors";
@@ -21,6 +22,7 @@ export default function Index() {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchDishes = async () => {
@@ -41,7 +43,9 @@ export default function Index() {
 
 
   const renderDishItem = ({ item }: { item: Dish }) => (
-    <DishCard dish={item} />
+    <TouchableOpacity onPress={() => router.push(`/dish-detail?id=${item.id}`)}>
+      <DishCard dish={item} />
+    </TouchableOpacity>
   );
 
   // Get unique categories from dishes
