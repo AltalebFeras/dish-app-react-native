@@ -3,12 +3,11 @@ import React from "react";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function CartScreen() {
-  const { items, removeFromCart, updateQuantity, clearCart, total } = useCart();
+  const { items, removeFromCart, updateQuantity, clearCart, total, createOrder } = useCart();
 
-  const handleCreateOrder = () => {
-    // TODO: Envoyer la commande au backend ou la stocker localement
-    alert("Commande créée !");
-    clearCart();
+  const handleCreateOrder = async () => {
+    await createOrder();
+    // Cart and dish cards will update automatically
   };
 
   if (items.length === 0)

@@ -4,6 +4,13 @@ import { useEffect, useState } from "react";
 import Toast from "react-native-root-toast";
 
 const CART_KEY = "cart";
+const ORDERS_KEY = "orders";
+
+export type Order = {
+  id: string;
+  items: CartItem[];
+  createdAt: string;
+};
 
 export function useCart() {
   const [items, setItems] = useState<CartItem[]>([]);
@@ -85,6 +92,25 @@ export function useCart() {
     0
   );
 
+  // Save order and clear cart
+  const createOrder = async () => {
+    if (items.length === 0) return;
+    const order: Order = {
+      id: Date.now().toString(),
+      items: [...items],
+      createdAt: new Date().toISOString(),
+    };
+    try {
+      const ordersRaw = await AsyncStorage.getItem(ORDERS_KEY);
+      const orders: Order[] = ordersRaw ? JSON.parse(ordersRaw) : [];
+      await AsyncStorage.setItem(ORDERS_KEY, JSON.stringify([...orders, order]));
+      setItems([]); // Clear cart after order creation
+      Toast.show("Commande créée !", { duration: Toast.durations.SHORT, position: Toast.positions.BOTTOM });
+    } catch (err) {
+      Toast.show("Erreur lors de la création de la commande", { duration: Toast.durations.SHORT, position: Toast.positions.BOTTOM });
+    }
+  };
+
   return {
     items,
     addToCart,
@@ -93,5 +119,6 @@ export function useCart() {
     updateQuantity,
     getQuantity,
     total,
+    createOrder,
   };
 }
