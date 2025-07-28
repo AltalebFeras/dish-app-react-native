@@ -1,9 +1,9 @@
-import { useCart } from "@/app/hooks/useCart";
+import { useCartContext } from "@/app/providers/CartProvider";
 import React from "react";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function CartScreen() {
-  const { items, removeFromCart, updateQuantity, clearCart, total, createOrder } = useCart();
+  const { items, removeFromCart, updateQuantity, clearCart, total, createOrder } = useCartContext();
 
   const handleCreateOrder = async () => {
     await createOrder();

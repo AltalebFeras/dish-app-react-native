@@ -1,10 +1,12 @@
 import { Stack } from "expo-router";
 import { RootSiblingParent } from 'react-native-root-siblings';
+import { CartProvider } from "./providers/CartProvider";
 
 
 export default function RootLayout() {
   return (
-    <RootSiblingParent> 
+    <RootSiblingParent>
+      <CartProvider>  
     <Stack screenOptions={{ headerShown: false }}>
 
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -23,6 +25,7 @@ export default function RootLayout() {
         }}
       />
     </Stack>
+      </CartProvider>
   </RootSiblingParent>
 
   );

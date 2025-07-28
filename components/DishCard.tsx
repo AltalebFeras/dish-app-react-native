@@ -1,4 +1,4 @@
-import { useCart } from "@/app/hooks/useCart";
+import { useCartContext } from "@/app/providers/CartProvider";
 import { Dish } from "@/types/dish";
 import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -9,7 +9,7 @@ type Props = {
 };
 
 export default function DishCard({ dish }: Props) {
-  const { addToCart, getQuantity } = useCart();
+  const { addToCart, getQuantity } = useCartContext();
   // Use cart quantity as initial value
   const cartQuantity = getQuantity(dish.id);
   const [quantity, setQuantity] = useState(cartQuantity || 1);
