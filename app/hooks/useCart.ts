@@ -9,7 +9,7 @@ export function useCart() {
   const [items, setItems] = useState<CartItem[]>([]);
   const [loaded, setLoaded] = useState(false);
 
-  // Load cart from AsyncStorage on mount (async/await for reliability)
+  // Load cart from AsyncStorage on mount
   useEffect(() => {
     const loadCart = async () => {
       try {
@@ -26,6 +26,7 @@ export function useCart() {
     loadCart();
   }, []);
 
+  // Save cart to AsyncStorage whenever items change, but only after initial load
   useEffect(() => {
     if (loaded) {
       AsyncStorage.setItem(CART_KEY, JSON.stringify(items));
@@ -39,13 +40,14 @@ export function useCart() {
       if (existing) {
         updated = prev.map((item) =>
           item.dish.id === dish.id
-            ? { ...item, quantity: Math.min(10, item.quantity + quantity) }
+            ? { ...item, quantity: Math.min(10, quantity) }
             : item
         );
       } else {
         updated = [...prev, { dish, quantity }];
       }
-      return updated;
+      // Always return a new array reference
+      return [...updated];
     });
   };
 
@@ -53,7 +55,8 @@ export function useCart() {
     setItems((prev) => {
       const updated = prev.filter((item) => item.dish.id !== dishId);
       Toast.show("Plat supprimé du panier", { duration: Toast.durations.SHORT, position: Toast.positions.BOTTOM });
-      return updated;
+      // Always return a new array reference
+      return [...updated];
     });
   };
 
@@ -66,8 +69,15 @@ export function useCart() {
       const updated = prev.map((item) =>
         item.dish.id === dishId ? { ...item, quantity: Math.max(1, Math.min(10, quantity)) } : item
       );
-      return updated;
+      // Always return a new array reference
+      return [...updated];
     });
+  };
+
+  // Helper to get quantity of a dish in cart
+  const getQuantity = (dishId: string) => {
+    const item = items.find(i => i.dish.id === dishId);
+    return item ? item.quantity : 0;
   };
 
   const total = items.reduce(
@@ -81,6 +91,7 @@ export function useCart() {
     removeFromCart,
     clearCart,
     updateQuantity,
+    getQuantity,
     total,
   };
 }

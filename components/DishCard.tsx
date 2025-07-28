@@ -1,6 +1,6 @@
 import { useCart } from "@/app/hooks/useCart";
 import { Dish } from "@/types/dish";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-root-toast";
 
@@ -9,8 +9,15 @@ type Props = {
 };
 
 export default function DishCard({ dish }: Props) {
-  const { addToCart, items } = useCart();
-  const [quantity, setQuantity] = useState(1);
+  const { addToCart, getQuantity } = useCart();
+  // Use cart quantity as initial value
+  const cartQuantity = getQuantity(dish.id);
+  const [quantity, setQuantity] = useState(cartQuantity || 1);
+
+  // Sync local quantity with cart quantity if cart changes
+  useEffect(() => {
+    setQuantity(cartQuantity || 1);
+  }, [cartQuantity]);
 
   const handleMinus = () => setQuantity(q => Math.max(1, q - 1));
   const handlePlus = () => setQuantity(q => Math.min(10, q + 1));
@@ -18,7 +25,7 @@ export default function DishCard({ dish }: Props) {
   const handleAddToCart = () => {
     addToCart(dish, quantity);
     Toast.show("Plat ajouté au panier", { duration: Toast.durations.SHORT, position: Toast.positions.BOTTOM });
-    setQuantity(1);
+    // No need to reset quantity, keep it in sync with cart
   };
 
   return (
@@ -44,9 +51,8 @@ export default function DishCard({ dish }: Props) {
       >
         <Text style={styles.buttonText}>Ajouter au panier</Text>
       </TouchableOpacity>
-      {/* Show current quantity in cart for instant feedback */}
       <Text style={{textAlign: "center", color: "#2e7d32", marginTop: 4}}>
-        Dans le panier: {items.find(i => i.dish.id === dish.id)?.quantity || 0}
+        Dans le panier : {cartQuantity}
       </Text>
     </View>
   );
