@@ -9,7 +9,7 @@ type Props = {
 };
 
 export default function DishCard({ dish }: Props) {
-  const { addToCart } = useCart();
+  const { addToCart, items } = useCart();
   const [quantity, setQuantity] = useState(1);
 
   const handleMinus = () => setQuantity(q => Math.max(1, q - 1));
@@ -44,6 +44,10 @@ export default function DishCard({ dish }: Props) {
       >
         <Text style={styles.buttonText}>Ajouter au panier</Text>
       </TouchableOpacity>
+      {/* Show current quantity in cart for instant feedback */}
+      <Text style={{textAlign: "center", color: "#2e7d32", marginTop: 4}}>
+        Dans le panier: {items.find(i => i.dish.id === dish.id)?.quantity || 0}
+      </Text>
     </View>
   );
 }
