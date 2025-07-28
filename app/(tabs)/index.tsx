@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  FlatList,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput, TouchableOpacity,
-  View,
+    ActivityIndicator,
+    FlatList,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput, TouchableOpacity,
+    View,
 } from "react-native";
 
-import DishCard from "../../components/DishCard";
-import { dishesApi } from "../services/api";
 import { Colors } from "@/constants/Colors";
 import { Dish } from "@/types/dish";
+import DishCard from "../../components/DishCard";
+import { dishesApi } from "../services/api";
 
 
 export default function Index() {

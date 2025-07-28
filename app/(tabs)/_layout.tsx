@@ -35,16 +35,6 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="task"
-        options={{
-          title: 'Tasks',
-          headerTitle: 'Your Tasks',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="book" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
@@ -75,6 +65,26 @@ export default function TabLayout() {
           headerTitleStyle: {
             fontWeight: 'bold',
           },
+        }}
+      />
+      <Tabs.Screen
+        name="cart"
+        options={{
+          title: 'Panier',
+          headerTitle: 'Votre Panier',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="cart" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="orders"
+        options={{
+          title: 'Orders',
+          headerTitle: 'Your Orders',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="list" size={size} color={color} />
+          ),
         }}
       />
     </Tabs>

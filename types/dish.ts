@@ -11,3 +11,20 @@ export interface Dish {
   images: string[];
   ingredients: string[];
 }
+
+export type CartItem = {
+  dish: Dish;
+  quantity: number;
+};
+
+export type Cart = {
+  items: CartItem[];
+};
+
+export type Order = {
+  id: string;
+  items: CartItem[];
+  total: number;
+  status: 'pending' | 'confirmed' | 'delivered';
+  // Ajoutez d'autres champs selon le modèle fourni par le référent
+};

@@ -1,81 +1,116 @@
+import { useCart } from "@/app/hooks/useCart";
 import { Dish } from "@/types/dish";
-import { Link } from "expo-router";
+import React, { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Toast from "react-native-root-toast";
 
-interface DishCardProps {
+type Props = {
   dish: Dish;
-}
+};
 
-export default function DishCard({ dish }: DishCardProps) {
+export default function DishCard({ dish }: Props) {
+  const { addToCart } = useCart();
+  const [quantity, setQuantity] = useState(1);
+
+  const handleMinus = () => setQuantity(q => Math.max(1, q - 1));
+  const handlePlus = () => setQuantity(q => Math.min(10, q + 1));
+
+  const handleAddToCart = () => {
+    addToCart(dish, quantity);
+    Toast.show("Plat ajouté au panier", { duration: Toast.durations.SHORT, position: Toast.positions.BOTTOM });
+    setQuantity(1);
+  };
+
   return (
-    <Link
-      href={{
-        pathname: "/dish-detail",
-        params: { id: dish.id }
-      }}
-      asChild
-    >
-      <TouchableOpacity style={styles.card}>
-        <Image source={{ uri: dish.thumbnailUrl }} style={styles.image} />
-        <View style={styles.content}>
-          <Text style={styles.name}>{dish.name}</Text>
-          <Text style={styles.category}>{dish.category}</Text>
-          <Text style={styles.description} numberOfLines={2}>
-            {dish.description}
-          </Text>
-          <Text style={styles.price}>
-            {dish.price.amount} {dish.price.currency}
-          </Text>
-        </View>
+    <View style={styles.card}>
+      <Image source={{ uri: dish.thumbnailUrl }} style={styles.image} />
+      <Text style={styles.title}>{dish.name}</Text>
+      <Text style={styles.category}>{dish.category}</Text>
+      <Text style={styles.price}>
+        {dish.price.amount} {dish.price.currency}
+      </Text>
+      <View style={styles.qtyRow}>
+        <TouchableOpacity style={styles.qtyBtn} onPress={handleMinus}>
+          <Text style={styles.qtyBtnText}>-</Text>
+        </TouchableOpacity>
+        <Text style={styles.qtyText}>{quantity}</Text>
+        <TouchableOpacity style={styles.qtyBtn} onPress={handlePlus}>
+          <Text style={styles.qtyBtnText}>+</Text>
+        </TouchableOpacity>
+      </View>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleAddToCart}
+      >
+        <Text style={styles.buttonText}>Ajouter au panier</Text>
       </TouchableOpacity>
-    </Link>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    padding: 16,
     marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    elevation: 2,
   },
   image: {
-    width: '100%',
-    height: 200,
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-    resizeMode: 'cover',
+    width: "100%",
+    height: 120,
+    borderRadius: 8,
+    marginBottom: 8,
   },
-  content: {
-    padding: 16,
-  },
-  name: {
+  title: {
     fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 4,
-    color: '#333',
+    fontWeight: "bold",
   },
   category: {
     fontSize: 14,
-    color: '#666',
-    marginBottom: 8,
-  },
-  description: {
-    fontSize: 14,
-    color: '#555',
-    lineHeight: 20,
-    marginBottom: 12,
+    color: "#666",
+    marginBottom: 4,
   },
   price: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#2e7d32',
+    fontWeight: "bold",
+    color: "#2e7d32",
+    marginBottom: 8,
+  },
+  qtyRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 8,
+    gap: 8,
+  },
+  qtyBtn: {
+    backgroundColor: "#eee",
+    borderRadius: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+  },
+  qtyBtnText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#2e7d32",
+  },
+  qtyText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginHorizontal: 8,
+    minWidth: 24,
+    textAlign: "center",
+  },
+  button: {
+    backgroundColor: "#2e7d32",
+    paddingVertical: 8,
+    borderRadius: 6,
+    alignItems: "center",
+    marginTop: 8,
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
 });
