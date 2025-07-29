@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
 
 type UserProfile = {
@@ -18,55 +19,67 @@ export default function Profile() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
-  useEffect(() => {
-    let didCancel = false;
-    const fetchProfile = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const token = await AsyncStorage.getItem("token");
-        const tokenType = (await AsyncStorage.getItem("token_type")) || "Bearer";
-        console.log("Token:", token, "TokenType:", tokenType); // Debug log
-        if (!token) {
-          setError("No token found. Please login.");
-          setLoading(false);
-          return;
-        }
-        // Add a timeout to the fetch
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 7000); // 7 seconds
+  // Helper to check token and fetch profile
+  const checkAndFetchProfile = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    setProfile(null);
+    const storedToken = await AsyncStorage.getItem("token");
+    setToken(storedToken);
+    if (!storedToken) {
+      setError("You are not logged in. Please login to view your profile.");
+      setLoading(false);
+      return;
+    }
+    try {
+      const tokenType = (await AsyncStorage.getItem("token_type")) || "Bearer";
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 7000);
+      const res = await fetch("https://simplats-backend-main-854o9w.laravel.cloud/api/auth/me", {
+        headers: {
+          "Authorization": `${tokenType} ${storedToken}`,
+          "Accept": "application/json",
+        },
+        signal: controller.signal,
+      }).catch((err) => {
+        if (err.name === "AbortError") throw new Error("Request timed out.");
+        throw err;
+      });
+      clearTimeout(timeout);
 
-        const res = await fetch("https://simplats-backend-main-854o9w.laravel.cloud/api/auth/me", {
-          headers: {
-            "Authorization": `${tokenType} ${token}`,
-            "Accept": "application/json",
-          },
-          signal: controller.signal,
-        }).catch((err) => {
-          if (err.name === "AbortError") {
-            throw new Error("Request timed out.");
-          }
-          throw err;
-        });
-        clearTimeout(timeout);
-
-        if (!res || !res.ok) {
-          setError("Failed to fetch profile.");
-          setLoading(false);
-          return;
-        }
-        const data = await res.json();
-        if (!didCancel) setProfile(data);
-      } catch (err: any) {
-        setError(err?.message || "An error occurred while fetching profile.");
-      } finally {
-        if (!didCancel) setLoading(false);
+      if (!res || !res.ok) {
+        setError("Failed to fetch profile.");
+        setLoading(false);
+        return;
       }
-    };
-    fetchProfile();
-    return () => { didCancel = true; };
+      const data = await res.json();
+      setProfile(data);
+    } catch (err: any) {
+      setError(err?.message || "An error occurred while fetching profile.");
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  // Listen for navigation focus and token changes
+  useFocusEffect(
+    useCallback(() => {
+      checkAndFetchProfile();
+    }, [checkAndFetchProfile])
+  );
+
+  // Also listen for token changes (e.g., after logout)
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      const storedToken = await AsyncStorage.getItem("token");
+      if (storedToken !== token) {
+        checkAndFetchProfile();
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [token, checkAndFetchProfile]);
 
   if (loading) {
     return (
@@ -80,7 +93,7 @@ export default function Profile() {
   if (error || !profile) {
     return (
       <View style={styles.centered}>
-        <Text style={{ color: "red" }}>{error || "No profile data."}</Text>
+        <Text style={{ color: "red", textAlign: "center" }}>{error || "No profile data."}</Text>
       </View>
     );
   }
