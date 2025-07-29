@@ -48,8 +48,7 @@ export async function register(
   email: string,
   password: string,
   confirmPassword: string,
-  firstName: string,
-  lastName: string
+  username: string,
 ) {
   const res = await fetch(`${API_BASE_URL}/register`, {
     method: "POST",
@@ -58,8 +57,7 @@ export async function register(
       email,
       password,
       confirm_password: confirmPassword,
-      first_name: firstName,
-      last_name: lastName,
+      username,
     }),
   });
 

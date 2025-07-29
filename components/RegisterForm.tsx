@@ -2,10 +2,8 @@ import React from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 
 export default function RegisterForm({
-  firstName,
-  setFirstName,
-  lastName,
-  setLastName,
+  username,
+  setUsername,
   email,
   setEmail,
   password,
@@ -21,15 +19,9 @@ export default function RegisterForm({
     <View style={{ padding: 16, alignItems: "center" }}>
       <Text style={{ fontSize: 24, marginBottom: 20 }}>Register</Text>
       <TextInput
-        placeholder="First Name"
-        value={firstName}
-        onChangeText={setFirstName}
-        style={{ borderWidth: 1, width: "100%", marginBottom: 12, padding: 8, borderRadius: 6 }}
-      />
-      <TextInput
-        placeholder="Last Name"
-        value={lastName}
-        onChangeText={setLastName}
+        placeholder="Username"
+        value={username}
+        onChangeText={setUsername}
         style={{ borderWidth: 1, width: "100%", marginBottom: 12, padding: 8, borderRadius: 6 }}
       />
       <TextInput

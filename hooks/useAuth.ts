@@ -7,14 +7,13 @@ export const getToken = async (): Promise<string | null> => {
   return await AsyncStorage.getItem("token");
 };
 
-export default function useAuth() {
+export default function useAuth(onLoginSuccess?: () => void) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [screen, setScreen] = useState<"login" | "register" | "forgot">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [username, setUsername] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,6 +23,7 @@ export default function useAuth() {
     try {
       await login(email, password);
       setIsAuthenticated(true);
+      if (onLoginSuccess) onLoginSuccess();
     } catch (err: any) {
       setError(err.message || "Login failed");
     } finally {
@@ -35,7 +35,7 @@ export default function useAuth() {
     setIsLoading(true);
     setError(null);
     try {
-      await register(email, password, confirmPassword, firstName, lastName);
+      await register(email, password, confirmPassword, username);
       setScreen("login");
     } catch (err: any) {
       setError(err.message || "Registration failed");
@@ -54,6 +54,17 @@ export default function useAuth() {
     }, 1000);
   };
 
+  // Optionally, add a logout handler
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem("token");
+    setIsAuthenticated(false);
+    setScreen("login");
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+    setUsername("");
+  };
+
   return {
     isAuthenticated,
     screen,
@@ -64,14 +75,13 @@ export default function useAuth() {
     setPassword,
     confirmPassword,
     setConfirmPassword,
-    firstName,
-    setFirstName,
-    lastName,
-    setLastName,
+    username,
+    setUsername,
     isLoading,
     error,
     handleLogin,
     handleRegister,
     handleForgotPassword,
+    handleLogout, // export logout
   };
 }

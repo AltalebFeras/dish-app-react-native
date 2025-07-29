@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import React from "react";
 import { View } from "react-native";
 import ForgotPasswordForm from "../../components/ForgotPasswordForm";
@@ -6,6 +7,8 @@ import RegisterForm from "../../components/RegisterForm";
 import useAuth from "../../hooks/useAuth";
 
 export default function Index() {
+  const router = useRouter();
+  // Pass a callback to navigate to /profile after login
   const {
     isAuthenticated,
     screen,
@@ -16,16 +19,23 @@ export default function Index() {
     setPassword,
     confirmPassword,
     setConfirmPassword,
-    firstName,
-    setFirstName,
-    lastName,
-    setLastName,
+    username,
+    setUsername,
     isLoading,
     error,
     handleLogin,
     handleRegister,
     handleForgotPassword,
-  } = useAuth();
+  } = useAuth(() => {
+    router.replace("/profile");
+  });
+
+  // Optionally, if already authenticated, redirect
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      router.replace("/profile");
+    }
+  }, [isAuthenticated]);
 
   // Always render a View so the tab bar is visible
   if (isAuthenticated) return <View style={{ flex: 1 }} />;
@@ -48,10 +58,8 @@ export default function Index() {
   } else if (screen === "register") {
     content = (
       <RegisterForm
-        firstName={firstName}
-        setFirstName={setFirstName}
-        lastName={lastName}
-        setLastName={setLastName}
+        username={username}
+        setUsername={setUsername}
         email={email}
         setEmail={setEmail}
         password={password}
@@ -76,7 +84,7 @@ export default function Index() {
   }
 
   return (
-    <View style={{ flex: 1, justifyContent: "center" }}>
+    <View style={{ flex: 1, justifyContent: "center", padding: 16 }}>
       {content}
     </View>
   );
