@@ -1,9 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert } from "react-native";
-import { useAuthContext } from "../app/(tabs)/_layout"; // Import the context
-import * as authService from "../services/authService";
+import { login, register } from "../services/authService";
 
 // Helper to get token from AsyncStorage
 export const getToken = async (): Promise<string | null> => {
@@ -21,61 +18,42 @@ export default function useAuth() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const router = useRouter();
-  const { setAuthenticated } = useAuthContext();
-
   const handleLogin = async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await authService.login(email, password);
+      await login(email, password);
       setIsAuthenticated(true);
-      setAuthenticated(true);
-      router.navigate("/(tabs)/profile"); // Redirect to profile after login
-    } catch (e: any) {
-      if (e?.message) {
-        setError(e.message);
-      } else if (typeof e === "string") {
-        setError(e);
-      } else {
-        setError("Invalid credentials or server error.");
-      }
+    } catch (err: any) {
+      setError(err.message || "Login failed");
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleRegister = async () => {
-    if (password !== confirmPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
     setIsLoading(true);
     setError(null);
     try {
-      const data = await authService.register(email, password, confirmPassword, firstName, lastName);
-      // Registration successful, redirect to login
+      await register(email, password, confirmPassword, firstName, lastName);
       setScreen("login");
-      setError(null);
-    } catch (e: any) {
-      // Try to extract all error messages
-      if (e?.message) {
-        setError(e.message);
-      } else if (typeof e === "string") {
-        setError(e);
-      } else {
-        setError("Registration failed.");
-      }
+    } catch (err: any) {
+      setError(err.message || "Registration failed");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleForgotPassword = () => {
-    Alert.alert("Reset", "Password reset link sent (mock).");
+  const handleForgotPassword = async () => {
+    setIsLoading(true);
+    setError(null);
+    // Implement forgot password logic here if needed
+    setTimeout(() => {
+      setIsLoading(false);
+      setScreen("login");
+    }, 1000);
   };
 
-  // Expose error and navigation helpers
   return {
     isAuthenticated,
     screen,

@@ -1,84 +1,22 @@
 import { Colors } from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Tabs, useRouter, useSegments } from 'expo-router';
-import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
-import Toast from 'react-native-root-toast';
-
-// --- Auth Context ---
-const AuthContext = createContext<{ isAuthenticated: boolean; setAuthenticated: (v: boolean) => void }>({
-  isAuthenticated: false,
-  setAuthenticated: () => {},
-});
-
-export function useAuthContext() {
-  return useContext(AuthContext);
-}
-
-function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [isAuthenticated, setAuthenticated] = useState(false);
-
-  // Check token on mount and when login changes
-  useEffect(() => {
-    const checkToken = async () => {
-      const token = await AsyncStorage.getItem('token');
-      setAuthenticated(!!token);
-    };
-    checkToken();
-    // Listen for login/logout events (optional: use an event emitter for robustness)
-    const interval = setInterval(checkToken, 1000); // Poll every second
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <AuthContext.Provider value={{ isAuthenticated, setAuthenticated }}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
+import { Tabs } from 'expo-router';
+import React from 'react';
 
 // --- Tab Layout ---
 export default function TabLayout() {
-  const { isAuthenticated } = useAuthContext();
-  const router = useRouter();
-  const segments = useSegments();
-  const redirectedRef = useRef(false);
-
-  // Redirect to profile after login, only from /auth, and only once
-  useEffect(() => {
-    if (
-      isAuthenticated &&
-      segments[segments.length - 1] === "auth" &&
-      !redirectedRef.current
-    ) {
-      redirectedRef.current = true;
-      router.navigate('/(tabs)/profile');
-      Toast.show('Login successful!', { duration: Toast.durations.SHORT, position: Toast.positions.BOTTOM });
-    }
-   
-    if (!isAuthenticated) {
-      redirectedRef.current = false;
-    }
-  }, [isAuthenticated, segments, router]);
-
-  // Hide tab bar only on /auth when not authenticated
-  const hideTabBar = !isAuthenticated && segments[segments.length - 1] === "auth";
-
   return (
     <Tabs
       screenOptions={({ route }) => ({
         tabBarActiveTintColor: Colors.light.primary,
         tabBarInactiveTintColor: Colors.light.textSecondary,
-        tabBarStyle:
-          hideTabBar && route.name === "auth"
-            ? { display: 'none' }
-            : {
-                backgroundColor: Colors.light.background,
-                borderTopWidth: 1,
-                borderTopColor: Colors.light.border,
-                height: 120,
-                paddingTop: 8,
-              },
+        tabBarStyle: {
+          backgroundColor: Colors.light.background,
+          borderTopWidth: 1,
+          borderTopColor: Colors.light.border,
+          height: 120,
+          paddingTop: 8,
+        },
         headerStyle: {
           backgroundColor: Colors.light.primary,
         },
@@ -106,9 +44,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person" size={size} color={color} />
           ),
-          tabBarButton: !isAuthenticated ? () => null : undefined,
         }}
-        redirect={!isAuthenticated}
       />
       <Tabs.Screen
         name="cart"
@@ -118,9 +54,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="cart" size={size} color={color} />
           ),
-          tabBarButton: !isAuthenticated ? () => null : undefined,
         }}
-        redirect={!isAuthenticated}
       />
       <Tabs.Screen
         name="orders"
@@ -130,9 +64,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="list" size={size} color={color} />
           ),
-          tabBarButton: !isAuthenticated ? () => null : undefined,
         }}
-        redirect={!isAuthenticated}
       />
       <Tabs.Screen
         name="auth"
@@ -165,6 +97,3 @@ export default function TabLayout() {
     </Tabs>
   );
 }
-
-// Wrap the tab layout with AuthProvider
-(TabLayout as any).getLayout = (page: React.ReactNode) => <AuthProvider>{page}</AuthProvider>;
