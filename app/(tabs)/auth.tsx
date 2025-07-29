@@ -27,7 +27,8 @@ export default function Index() {
     handleForgotPassword,
   } = useAuth();
 
-  if (isAuthenticated) return null;
+  // Always render a View so the tab bar is visible
+  if (isAuthenticated) return <View style={{ flex: 1 }} />;
 
   let content = null;
   if (screen === "login") {
@@ -80,3 +81,9 @@ export default function Index() {
     </View>
   );
 }
+
+// Ensure the tab bar is visible on the auth page
+export const options = {
+  headerShown: false,
+  tabBarStyle: { display: "flex" },
+};

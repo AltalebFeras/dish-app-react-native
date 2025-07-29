@@ -65,6 +65,8 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     elevation: 2,
+    // Replace shadow props with boxShadow
+    boxShadow: '0px 2px 4px rgba(0,0,0,0.2)',
   },
   image: {
     width: "100%",

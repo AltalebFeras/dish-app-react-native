@@ -53,7 +53,7 @@ dishes-list/
 │   ├── (tabs)/         # Tab-based navigation
 │   ├── _layout.tsx     # Root layout
 │   ├── index.tsx       # Home screen
-│   └── dish-detail.tsx # Dish details screen
+│   └── DishDetail.tsx # Dish details screen
 ├── components/         # Reusable UI components
 ├── constants/          # App constants
 ├── services/          # API services

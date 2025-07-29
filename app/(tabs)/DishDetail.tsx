@@ -1,3 +1,5 @@
+// This file should be deleted or moved to a route group (e.g., app/(tabs)/DishDetail.tsx) to resolve the "Too many screens defined" error.
+
 import { Colors } from '@/constants/Colors';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -9,8 +11,8 @@ import {
   Text,
   View
 } from 'react-native';
-import { dishesApi } from '../services/api';
-import { Dish } from '../types/dish';
+import { dishesApi } from '../../services/api';
+import { Dish } from '../../types/dish';
 
 export default function DishDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -66,7 +68,11 @@ export default function DishDetail() {
         }} 
       />
       <ScrollView style={styles.container}>
-        <Image source={{ uri: dish.thumbnailUrl }} style={styles.image} />
+        <Image
+          source={{ uri: dish.thumbnailUrl }}
+          style={styles.image}
+          resizeMode="cover"
+        />
         
         <View style={styles.content}>
           <Text style={styles.title}>{dish.name}</Text>
@@ -88,10 +94,11 @@ export default function DishDetail() {
             <>
               <Text style={styles.sectionTitle}>More Images:</Text>
               {dish.images.map((imageUrl, index) => (
-                <Image 
-                  key={index} 
-                  source={{ uri: imageUrl }} 
-                  style={styles.additionalImage} 
+                <Image
+                  key={index}
+                  source={{ uri: imageUrl }}
+                  style={styles.additionalImage}
+                  resizeMode="cover"
                 />
               ))}
             </>
@@ -115,7 +122,6 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: 250,
-    resizeMode: 'cover',
   },
   content: {
     padding: 20,
@@ -155,7 +161,6 @@ const styles = StyleSheet.create({
   additionalImage: {
     width: '100%',
     height: 200,
-    resizeMode: 'cover',
     marginBottom: 10,
     borderRadius: 8,
   },

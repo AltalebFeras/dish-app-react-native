@@ -43,7 +43,7 @@ export default function Index() {
 
 
   const renderDishItem = ({ item }: { item: Dish }) => (
-    <TouchableOpacity onPress={() => router.push(`/dish-detail?id=${item.id}`)}>
+    <TouchableOpacity onPress={() => router.push(`/DishDetail?id=${item.id}`)}>
       <DishCard dish={item} />
     </TouchableOpacity>
   );

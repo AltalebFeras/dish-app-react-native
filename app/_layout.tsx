@@ -1,4 +1,5 @@
 import { Stack } from "expo-router";
+import { View } from "react-native";
 import { RootSiblingParent } from 'react-native-root-siblings';
 import { CartProvider } from "../providers/CartProvider";
 
@@ -11,7 +12,7 @@ export default function RootLayout() {
 
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen
-        name="dish-detail"
+        name="DishDetail"
         options={{
           headerShown: true,
           headerStyle: {
@@ -30,3 +31,7 @@ export default function RootLayout() {
 
   );
 }
+
+<View style={{ pointerEvents: 'none' }}>
+  {/* Other components */}
+</View>

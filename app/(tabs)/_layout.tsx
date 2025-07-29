@@ -52,7 +52,7 @@ export default function TabLayout() {
       !redirectedRef.current
     ) {
       redirectedRef.current = true;
-      router.replace('/profile');
+      router.navigate('/(tabs)/profile');
       Toast.show('Login successful!', { duration: Toast.durations.SHORT, position: Toast.positions.BOTTOM });
     }
    
@@ -61,23 +61,24 @@ export default function TabLayout() {
     }
   }, [isAuthenticated, segments, router]);
 
-  // Hide tab bar on /auth when not authenticated
+  // Hide tab bar only on /auth when not authenticated
   const hideTabBar = !isAuthenticated && segments[segments.length - 1] === "auth";
 
   return (
     <Tabs
-      screenOptions={{
+      screenOptions={({ route }) => ({
         tabBarActiveTintColor: Colors.light.primary,
         tabBarInactiveTintColor: Colors.light.textSecondary,
-        tabBarStyle: hideTabBar
-          ? { display: 'none' }
-          : {
-              backgroundColor: Colors.light.background,
-              borderTopWidth: 1,
-              borderTopColor: Colors.light.border,
-              height: 120,
-              paddingTop: 8,
-            },
+        tabBarStyle:
+          hideTabBar && route.name === "auth"
+            ? { display: 'none' }
+            : {
+                backgroundColor: Colors.light.background,
+                borderTopWidth: 1,
+                borderTopColor: Colors.light.border,
+                height: 120,
+                paddingTop: 8,
+              },
         headerStyle: {
           backgroundColor: Colors.light.primary,
         },
@@ -86,7 +87,7 @@ export default function TabLayout() {
           fontWeight: 'bold',
         },
         headerShown: true,
-      }}
+      })}
     >
       <Tabs.Screen
         name="index"
@@ -136,6 +137,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="auth"
         options={{
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: Colors.light.primary,
+          },
           title: 'Auth',
           headerTitle: 'Authentication',
           tabBarIcon: ({ color, size }) => (
@@ -144,7 +149,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="dish-detail"
+        name="DishDetail"
         options={{
           headerShown: true,
           headerStyle: {
