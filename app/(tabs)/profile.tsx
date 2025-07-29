@@ -1,19 +1,21 @@
 import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, Text, View } from "react-native";
+import { getToken } from '../hooks/useAuth';
 
-export default function Profile() {
+export default  function Profile() {
   return (
     <View style={styles.container}>
       <Ionicons name="person-circle-outline" size={64} color="#ccc" />
       <Text style={styles.title}>Profile</Text>
       <Text style={styles.subtitle}>
+        {/* {`Token: ${await getToken()}`} */}
         Manage your account settings
       </Text>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create({  
   container: {
     flex: 1,
     justifyContent: 'center',

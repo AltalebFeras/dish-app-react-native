@@ -1,12 +1,12 @@
 import { useRouter } from "expo-router";
-import * as SecureStore from "expo-secure-store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
 import { Alert } from "react-native";
 import * as authService from "../services/authService";
 
-// Helper to get token from SecureStore
+// Helper to get token from AsyncStorage
 export const getToken = async (): Promise<string | null> => {
-  return await SecureStore.getItemAsync("token");
+  return await AsyncStorage.getItem("token");
 };
 
 export default function useAuth() {
@@ -28,14 +28,9 @@ export default function useAuth() {
     try {
       const data = await authService.login(email, password);
       setIsAuthenticated(true);
-      if (data.token) {
-        await SecureStore.setItemAsync("token", data.token);
-      }
-      if (data.refresh_token) {
-        await SecureStore.setItemAsync("refresh_token", data.refresh_token);
-      }
-      // Navigate to Task screen (assuming route is '/task')
-      router.replace("/task");
+      // Token is already saved in AsyncStorage by authService.login
+      // Navigate to Profile screen (assuming route is '/profile')
+      router.replace("/profile");
     } catch (e: any) {
       // Handle error object with code/message or string
       if (e?.message) {
