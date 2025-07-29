@@ -57,6 +57,7 @@ export default function useAuth(onLoginSuccess?: () => void) {
   // Optionally, add a logout handler
   const handleLogout = async () => {
     await AsyncStorage.removeItem("token");
+    await AsyncStorage.removeItem("token_type");
     setIsAuthenticated(false);
     setScreen("login");
     setEmail("");
@@ -82,6 +83,6 @@ export default function useAuth(onLoginSuccess?: () => void) {
     handleLogin,
     handleRegister,
     handleForgotPassword,
-    handleLogout, // export logout
+    handleLogout,
   };
 }

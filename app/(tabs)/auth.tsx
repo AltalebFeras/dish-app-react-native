@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import React from "react";
-import { View } from "react-native";
+import { Button, View } from "react-native";
 import ForgotPasswordForm from "../../components/ForgotPasswordForm";
 import LoginForm from "../../components/LoginForm";
 import RegisterForm from "../../components/RegisterForm";
@@ -26,6 +26,7 @@ export default function Index() {
     handleLogin,
     handleRegister,
     handleForgotPassword,
+    handleLogout,
   } = useAuth(() => {
     router.replace("/profile");
   });
@@ -37,8 +38,14 @@ export default function Index() {
     }
   }, [isAuthenticated]);
 
-  // Always render a View so the tab bar is visible
-  if (isAuthenticated) return <View style={{ flex: 1 }} />;
+  // Show logout button if authenticated
+  if (isAuthenticated) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", padding: 16 }}>
+        <Button title="Logout" color="#f44336" onPress={handleLogout} />
+      </View>
+    );
+  }
 
   let content = null;
   if (screen === "login") {
