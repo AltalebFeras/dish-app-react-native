@@ -1,4 +1,4 @@
-import { useCart } from "@/app/hooks/useCart";
+import { useCart } from "@/hooks/useCart";
 import React, { createContext, useContext } from "react";
 
 const CartContext = createContext<ReturnType<typeof useCart> | null>(null);

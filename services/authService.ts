@@ -36,6 +36,8 @@ export async function login(email: string, password: string) {
   // Save token to AsyncStorage
   if (data?.token) {
     await AsyncStorage.setItem("token", data.token);
+    console.log("Token saved to AsyncStorage:", data.token);
+    
     await AsyncStorage.setItem("token_type", data.token_type || "Bearer");
   }
 

@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
 import { RootSiblingParent } from 'react-native-root-siblings';
-import { CartProvider } from "./providers/CartProvider";
+import { CartProvider } from "../providers/CartProvider";
 
 
 export default function RootLayout() {

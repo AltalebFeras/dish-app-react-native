@@ -1,4 +1,4 @@
-import { useCartContext } from "@/app/providers/CartProvider";
+import { useCartContext } from "@/providers/CartProvider";
 import React from "react";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 

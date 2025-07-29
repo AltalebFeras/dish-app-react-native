@@ -1,7 +1,8 @@
-import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Alert } from "react-native";
+import { useAuthContext } from "../app/(tabs)/_layout"; // Import the context
 import * as authService from "../services/authService";
 
 // Helper to get token from AsyncStorage
@@ -21,6 +22,7 @@ export default function useAuth() {
   const [error, setError] = useState<string | null>(null);
 
   const router = useRouter();
+  const { setAuthenticated } = useAuthContext();
 
   const handleLogin = async () => {
     setIsLoading(true);
@@ -28,11 +30,9 @@ export default function useAuth() {
     try {
       const data = await authService.login(email, password);
       setIsAuthenticated(true);
-      // Token is already saved in AsyncStorage by authService.login
-      // Navigate to Profile screen (assuming route is '/profile')
-      router.replace("/profile");
+      setAuthenticated(true);
+      router.navigate("/(tabs)/profile"); // Redirect to profile after login
     } catch (e: any) {
-      // Handle error object with code/message or string
       if (e?.message) {
         setError(e.message);
       } else if (typeof e === "string") {

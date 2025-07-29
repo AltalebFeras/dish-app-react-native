@@ -1,9 +1,9 @@
 import React from "react";
 import { View } from "react-native";
-import ForgotPasswordForm from "../components/ForgotPasswordForm";
-import LoginForm from "../components/LoginForm";
-import RegisterForm from "../components/RegisterForm";
-import useAuth from "../hooks/useAuth";
+import ForgotPasswordForm from "../../components/ForgotPasswordForm";
+import LoginForm from "../../components/LoginForm";
+import RegisterForm from "../../components/RegisterForm";
+import useAuth from "../../hooks/useAuth";
 
 export default function Index() {
   const {

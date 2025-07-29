@@ -1,4 +1,4 @@
-import { useCartContext } from "@/app/providers/CartProvider";
+import { useCartContext } from "@/providers/CartProvider";
 import { Dish } from "@/types/dish";
 import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";

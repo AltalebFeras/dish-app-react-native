@@ -13,7 +13,7 @@ import {
 import { Colors } from "@/constants/Colors";
 import { Dish } from "@/types/dish";
 import DishCard from "../../components/DishCard";
-import { dishesApi } from "../services/api";
+import { dishesApi } from "../../services/api";
 
 
 export default function Index() {

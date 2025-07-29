@@ -1,16 +1,16 @@
+import { Colors } from '@/constants/Colors';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View
+  ActivityIndicator,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View
 } from 'react-native';
-import { dishesApi } from './services/api';
+import { dishesApi } from '../services/api';
 import { Dish } from '../types/dish';
-import { Colors } from '@/constants/Colors';
 
 export default function DishDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
