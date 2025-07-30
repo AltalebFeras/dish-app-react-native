@@ -55,7 +55,7 @@ export default function Profile() {
         return;
       }
       const data = await res.json();
-      setProfile(data);
+      setProfile(data.data);
     } catch (err: any) {
       setError(err?.message || "An error occurred while fetching profile.");
     } finally {
@@ -105,8 +105,8 @@ export default function Profile() {
       <Text style={styles.label}>ID: <Text style={styles.value}>{profile.id}</Text></Text>
       <Text style={styles.label}>Name: <Text style={styles.value}>{profile.name}</Text></Text>
       <Text style={styles.label}>Email: <Text style={styles.value}>{profile.email}</Text></Text>
-      <Text style={styles.label}>Created At: <Text style={styles.value}>{profile.created_at}</Text></Text>
-      <Text style={styles.label}>Updated At: <Text style={styles.value}>{profile.updated_at}</Text></Text>
+      <Text style={styles.label}>Created At: <Text style={styles.value}>{new Date(profile.created_at).toLocaleString()}</Text></Text>
+      <Text style={styles.label}>Updated At: <Text style={styles.value}>{new Date(profile.updated_at).toLocaleString()}</Text></Text>
       <Text style={styles.label}>Restaurants: <Text style={styles.value}>{profile.restaurants.length}</Text></Text>
       <Text style={styles.label}>Orders: <Text style={styles.value}>{profile.orders.length}</Text></Text>
     </ScrollView>
