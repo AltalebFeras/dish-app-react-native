@@ -50,14 +50,15 @@ export async function register(
   confirmPassword: string,
   username: string,
 ) {
+  // Use correct endpoint and data keys for registration
   const res = await fetch(`${API_BASE_URL}/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       email,
       password,
-      confirm_password: confirmPassword,
-      username,
+      password_confirmation: confirmPassword,
+      name: username,
     }),
   });
 
