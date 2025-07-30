@@ -1,6 +1,6 @@
 import { Dish } from "@/types/dish";
 
-const API_BASE_URL = 'https://687ce272918b6422433059ae.mockapi.io/api/v1';
+const API_BASE_URL = 'https://simplats-backend-main-854o9w.laravel.cloud/api';
 
 export const dishesApi = {
   async getAllDishes(): Promise<Dish[]> {
@@ -9,7 +9,9 @@ export const dishesApi = {
       if (!response.ok) {
         throw new Error('Failed to fetch dishes');
       }
-      return await response.json();
+      const json = await response.json();
+      // The actual dishes are in json.data
+      return json.data;
     } catch (error) {
       console.error('Error fetching dishes:', error);
       throw error;

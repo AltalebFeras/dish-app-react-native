@@ -78,19 +78,25 @@ export default function DishDetail() {
           <Text style={styles.title}>{dish.name}</Text>
           <Text style={styles.category}>{dish.category}</Text>
           <Text style={styles.price}>
-            {dish.price.amount} {dish.price.currency}
+            {dish.price && dish.price.amount != null && dish.price.currency
+              ? `${dish.price.amount} ${dish.price.currency}`
+              : "N/A"}
           </Text>
           
           <Text style={styles.description}>{dish.description}</Text>
           
           <Text style={styles.sectionTitle}>Ingredients:</Text>
-          {dish.ingredients.map((ingredient, index) => (
-            <Text key={index} style={styles.ingredient}>
-              • {ingredient}
-            </Text>
-          ))}
+          {Array.isArray(dish.ingredients) && dish.ingredients.length > 0 ? (
+            dish.ingredients.map((ingredient, index) => (
+              <Text key={index} style={styles.ingredient}>
+                • {ingredient}
+              </Text>
+            ))
+          ) : (
+            <Text style={styles.ingredient}>No ingredients listed.</Text>
+          )}
           
-          {dish.images.length > 0 && (
+          {Array.isArray(dish.images) && dish.images.length > 0 && (
             <>
               <Text style={styles.sectionTitle}>More Images:</Text>
               {dish.images.map((imageUrl, index) => (
