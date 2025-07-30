@@ -1,10 +1,12 @@
 import { Colors } from '@/constants/Colors';
+import useAuth from '@/hooks/useAuth';
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import React from 'react';
 
 // --- Tab Layout ---
 export default function TabLayout() {
+  const { isAuthenticated } = useAuth();
   return (
     <Tabs
       screenOptions={({ route }) => ({
@@ -38,13 +40,13 @@ export default function TabLayout() {
       />
       <Tabs.Screen
         name="profile"
-        options={{
+        options={isAuthenticated ? {
           title: 'Profile',
           headerTitle: 'My Profile',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person" size={size} color={color} />
           ),
-        }}
+        } :  {href:null}}
       />
       <Tabs.Screen
         name="cart"
@@ -58,14 +60,15 @@ export default function TabLayout() {
       />
       <Tabs.Screen
         name="orders"
-        options={{
+        options={ isAuthenticated ? {
           title: 'Orders',
           headerTitle: 'Your Orders',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="list" size={size} color={color} />
           ),
-        }}
-      />
+        } :  {href:null}}
+      />    
+      
       <Tabs.Screen
         name="auth"
         options={{
