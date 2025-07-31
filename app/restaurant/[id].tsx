@@ -1,91 +1,97 @@
 import { Colors } from "@/constants/Colors";
 import { dishesApi } from "@/services/api";
-import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useLocalSearchParams } from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  FlatList,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    FlatList,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
-export default function RestaurantsScreen() {
-  const [restaurants, setRestaurants] = useState<any[]>([]);
+export default function RestaurantDetailScreen() {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const [restaurant, setRestaurant] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const router = useRouter();
 
   useEffect(() => {
+    if (!id) return;
     const fetchData = async () => {
       try {
-        setLoading(true);
-        const data = await dishesApi.fetchRestaurants();
-        setRestaurants(data.data);
+        const data = await dishesApi.fetchRestaurantDetail(id);
+        setRestaurant(data.data);
       } catch (err) {
-        setError("Failed to load restaurants");
-        console.error(err);
+        // Correctly handle unknown error type
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("An unknown error occurred");
+        }
       } finally {
         setLoading(false);
       }
     };
     fetchData();
-  }, []);
+  }, [id]);
 
-  // Get unique categories from restaurant data (if you want to filter by address, etc.)
-  const categories = Array.from(
-    new Set(restaurants.map((r) => r.address || "Other"))
-  );
-
-  // Filter and search logic
-  const filteredRestaurants = restaurants.filter((rest) => {
-    const matchesSearch =
-      rest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (rest.address && rest.address.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesCategory = selectedCategory ? rest.address === selectedCategory : true;
-    return matchesSearch && matchesCategory;
-  });
-
-  const renderRestaurantItem = ({ item }: { item: any }) => (
-    <TouchableOpacity
-      onPress={() => router.push({ pathname: "/restaurant/[id]", params: { id: item.id.toString() } })}
-    >
-      <View style={styles.card}>
-        <Text style={styles.title}>{item.name}</Text>
-        <Text style={styles.address}>{item.address}</Text>
-        <Text style={styles.description}>{item.description}</Text>
-      </View>
-    </TouchableOpacity>
-  );
-
-  if (loading) {
+  if (loading)
     return (
       <View style={styles.centered}>
         <ActivityIndicator size="large" color={Colors.light.primary} />
-        <Text style={styles.loadingText}>Loading restaurants...</Text>
+        <Text style={styles.loadingText}>Loading restaurant...</Text>
       </View>
     );
-  }
-
-  if (error) {
+  if (error)
     return (
       <View style={styles.centered}>
         <Text style={styles.error}>{error}</Text>
       </View>
     );
-  }
+  if (!restaurant)
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.error}>Restaurant not found.</Text>
+      </View>
+    );
+
+  // Get unique categories from dishes
+  const dishes = restaurant.dishes || [];
+  const categories = Array.from(new Set(dishes.map((dish: any) => dish.category)));
+
+  // Filter and search logic for dishes
+  const filteredDishes = dishes.filter((dish: any) => {
+    const matchesSearch =
+      dish.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (dish.category && dish.category.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesCategory = selectedCategory ? dish.category === selectedCategory : true;
+    return matchesSearch && matchesCategory;
+  });
+
+  const renderDishItem = ({ item }: { item: any }) => (
+    <View style={styles.dishCard}>
+      <Text style={styles.dishTitle}>{item.name}</Text>
+      <Text style={styles.dishCategory}>{item.category}</Text>
+      <Text style={styles.dishDescription}>{item.description}</Text>
+    </View>
+  );
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>{restaurant.name}</Text>
+      <Text style={styles.address}>{restaurant.address}</Text>
+      <Text style={styles.description}>{restaurant.description}</Text>
+
       {/* Search Bar */}
       <TextInput
         style={styles.searchBar}
-        placeholder="Search restaurants or address..."
+        placeholder="Search dishes or categories..."
         value={searchQuery}
         onChangeText={setSearchQuery}
         autoCorrect={false}
@@ -93,7 +99,7 @@ export default function RestaurantsScreen() {
         clearButtonMode="while-editing"
       />
 
-      {/* Category Filter (by address for demo) */}
+      {/* Category Filter */}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -101,63 +107,57 @@ export default function RestaurantsScreen() {
         contentContainerStyle={styles.categoryContainer}
       >
         <TouchableOpacity
-          style={[
-            styles.categoryButton,
-            !selectedCategory && styles.categoryButtonSelected,
-          ]}
+          style={[styles.categoryButton, !selectedCategory && styles.categoryButtonSelected]}
           onPress={() => setSelectedCategory(null)}
         >
-          <Text
-            style={[
-              styles.categoryText,
-              !selectedCategory && styles.categoryTextSelected,
-            ]}
-          >
-            All
-          </Text>
+          <Text style={[styles.categoryText, !selectedCategory && styles.categoryTextSelected]}>All</Text>
         </TouchableOpacity>
         {categories.map((category) => (
           <TouchableOpacity
             key={category}
-            style={[
-              styles.categoryButton,
-              selectedCategory === category && styles.categoryButtonSelected,
-            ]}
+            style={[styles.categoryButton, selectedCategory === category && styles.categoryButtonSelected]}
             onPress={() => setSelectedCategory(category)}
           >
-            <Text
-              style={[
-                styles.categoryText,
-                selectedCategory === category && styles.categoryTextSelected,
-              ]}
-            >
+            <Text style={[styles.categoryText, selectedCategory === category && styles.categoryTextSelected]}>
               {category}
             </Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
 
+      <Text style={styles.sectionTitle}>Dishes:</Text>
       <FlatList
-        data={filteredRestaurants}
-        renderItem={renderRestaurantItem}
+        data={filteredDishes}
         keyExtractor={(item) => item.id.toString()}
-        showsVerticalScrollIndicator={false}
+        renderItem={renderDishItem}
+        ListEmptyComponent={<Text style={styles.emptyText}>No dishes found.</Text>}
+        scrollEnabled={false}
         contentContainerStyle={styles.listContainer}
-        ListEmptyComponent={
-          <Text style={styles.emptyText}>No restaurants found.</Text>
-        }
       />
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    padding: 16,
     backgroundColor: Colors.light.background,
   },
+  title: {
+    fontWeight: "bold",
+    fontSize: 22,
+  },
+  address: {
+    color: "#666",
+    marginTop: 4,
+  },
+  description: {
+    color: "#888",
+    marginTop: 2,
+    marginBottom: 12,
+  },
   searchBar: {
-    margin: 16,
+    marginVertical: 12,
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 8,
@@ -197,25 +197,31 @@ const styles = StyleSheet.create({
     color: Colors.light.textWhite,
     fontWeight: "bold",
   },
-  listContainer: {
-    padding: 16,
+  sectionTitle: {
+    marginTop: 16,
+    fontWeight: "bold",
+    fontSize: 18,
+    marginBottom: 8,
   },
-  card: {
+  listContainer: {
+    paddingBottom: 16,
+  },
+  dishCard: {
     backgroundColor: "#fff",
     marginBottom: 12,
     borderRadius: 8,
     padding: 16,
     elevation: 2,
   },
-  title: {
+  dishTitle: {
     fontWeight: "bold",
-    fontSize: 18,
+    fontSize: 16,
   },
-  address: {
+  dishCategory: {
     color: "#666",
-    marginTop: 4,
+    marginTop: 2,
   },
-  description: {
+  dishDescription: {
     color: "#888",
     marginTop: 2,
   },
