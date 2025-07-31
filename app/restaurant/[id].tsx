@@ -1,10 +1,12 @@
 import { Colors } from "@/constants/Colors";
 import { dishesApi } from "@/services/api";
-import { useLocalSearchParams } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
     ActivityIndicator,
     FlatList,
+    Pressable,
     ScrollView,
     StyleSheet,
     Text,
@@ -15,6 +17,7 @@ import {
 
 export default function RestaurantDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
   const [restaurant, setRestaurant] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +31,6 @@ export default function RestaurantDetailScreen() {
         const data = await dishesApi.fetchRestaurantDetail(id);
         setRestaurant(data.data);
       } catch (err) {
-        // Correctly handle unknown error type
         if (err instanceof Error) {
           setError(err.message);
         } else {
@@ -61,11 +63,9 @@ export default function RestaurantDetailScreen() {
       </View>
     );
 
-  // Get unique categories from dishes
   const dishes = restaurant.dishes || [];
   const categories = Array.from(new Set(dishes.map((dish: any) => dish.category)));
 
-  // Filter and search logic for dishes
   const filteredDishes = dishes.filter((dish: any) => {
     const matchesSearch =
       dish.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -83,73 +83,106 @@ export default function RestaurantDetailScreen() {
   );
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>{restaurant.name}</Text>
-      <Text style={styles.address}>{restaurant.address}</Text>
-      <Text style={styles.description}>{restaurant.description}</Text>
+    <View style={styles.layoutContainer}>
+      {/* Header with back button */}
+      <View style={styles.header}>
+        <Pressable onPress={() => router.back()} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={24} color={Colors.light.textWhite} />
+        </Pressable>
+        <Text style={styles.headerTitle} numberOfLines={1}>
+          {restaurant.name}
+        </Text>
+      </View>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.address}>{restaurant.address}</Text>
+        <Text style={styles.description}>{restaurant.description}</Text>
 
-      {/* Search Bar */}
-      <TextInput
-        style={styles.searchBar}
-        placeholder="Search dishes or categories..."
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-        autoCorrect={false}
-        autoCapitalize="none"
-        clearButtonMode="while-editing"
-      />
+        {/* Search Bar */}
+        <TextInput
+          style={styles.searchBar}
+          placeholder="Search dishes or categories..."
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          autoCorrect={false}
+          autoCapitalize="none"
+          clearButtonMode="while-editing"
+        />
 
-      {/* Category Filter */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.categoryScroll}
-        contentContainerStyle={styles.categoryContainer}
-      >
-        <TouchableOpacity
-          style={[styles.categoryButton, !selectedCategory && styles.categoryButtonSelected]}
-          onPress={() => setSelectedCategory(null)}
+        {/* Category Filter */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.categoryScroll}
+          contentContainerStyle={styles.categoryContainer}
         >
-          <Text style={[styles.categoryText, !selectedCategory && styles.categoryTextSelected]}>All</Text>
-        </TouchableOpacity>
-        {categories.map((category) => {
-          const cat = typeof category === "string" ? category : String(category ?? "Other");
-          return (
-            <TouchableOpacity
-              key={cat}
-              style={[
-                styles.categoryButton,
-                selectedCategory === cat && styles.categoryButtonSelected,
-              ]}
-              onPress={() => setSelectedCategory(cat)}
-            >
-              <Text
+          <TouchableOpacity
+            style={[styles.categoryButton, !selectedCategory && styles.categoryButtonSelected]}
+            onPress={() => setSelectedCategory(null)}
+          >
+            <Text style={[styles.categoryText, !selectedCategory && styles.categoryTextSelected]}>All</Text>
+          </TouchableOpacity>
+          {categories.map((category) => {
+            const cat = typeof category === "string" ? category : String(category ?? "Other");
+            return (
+              <TouchableOpacity
+                key={cat}
                 style={[
-                  styles.categoryText,
-                  selectedCategory === cat && styles.categoryTextSelected,
+                  styles.categoryButton,
+                  selectedCategory === cat && styles.categoryButtonSelected,
                 ]}
+                onPress={() => setSelectedCategory(cat)}
               >
-                {cat}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </ScrollView>
+                <Text
+                  style={[
+                    styles.categoryText,
+                    selectedCategory === cat && styles.categoryTextSelected,
+                  ]}
+                >
+                  {cat}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
 
-      <Text style={styles.sectionTitle}>Dishes:</Text>
-      <FlatList
-        data={filteredDishes}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderDishItem}
-        ListEmptyComponent={<Text style={styles.emptyText}>No dishes found.</Text>}
-        scrollEnabled={false}
-        contentContainerStyle={styles.listContainer}
-      />
-    </ScrollView>
+        <Text style={styles.sectionTitle}>Dishes:</Text>
+        <FlatList
+          data={filteredDishes}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderDishItem}
+          ListEmptyComponent={<Text style={styles.emptyText}>No dishes found.</Text>}
+          scrollEnabled={false}
+          contentContainerStyle={styles.listContainer}
+        />
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  layoutContainer: {
+    flex: 1,
+    backgroundColor: Colors.light.background,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: Colors.light.primary,
+    paddingTop: 48,
+    paddingBottom: 16,
+    paddingHorizontal: 16,
+    minHeight: 80,
+  },
+  backButton: {
+    marginRight: 16,
+    padding: 4,
+  },
+  headerTitle: {
+    color: Colors.light.textWhite,
+    fontSize: 20,
+    fontWeight: "bold",
+    flex: 1,
+  },
   container: {
     padding: 16,
     backgroundColor: Colors.light.background,
