@@ -112,17 +112,28 @@ export default function RestaurantDetailScreen() {
         >
           <Text style={[styles.categoryText, !selectedCategory && styles.categoryTextSelected]}>All</Text>
         </TouchableOpacity>
-        {categories.map((category) => (
-          <TouchableOpacity
-            key={category}
-            style={[styles.categoryButton, selectedCategory === category && styles.categoryButtonSelected]}
-            onPress={() => setSelectedCategory(category)}
-          >
-            <Text style={[styles.categoryText, selectedCategory === category && styles.categoryTextSelected]}>
-              {category}
-            </Text>
-          </TouchableOpacity>
-        ))}
+        {categories.map((category) => {
+          const cat = typeof category === "string" ? category : String(category ?? "Other");
+          return (
+            <TouchableOpacity
+              key={cat}
+              style={[
+                styles.categoryButton,
+                selectedCategory === cat && styles.categoryButtonSelected,
+              ]}
+              onPress={() => setSelectedCategory(cat)}
+            >
+              <Text
+                style={[
+                  styles.categoryText,
+                  selectedCategory === cat && styles.categoryTextSelected,
+                ]}
+              >
+                {cat}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
       </ScrollView>
 
       <Text style={styles.sectionTitle}>Dishes:</Text>
