@@ -38,15 +38,32 @@ export default function TabLayout() {
           ),
         }}
       />
+      {!isAuthenticated && (
+        <Tabs.Screen
+          name="auth"
+          options={{
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: Colors.light.primary,
+            },
+            title: 'Auth',
+            headerTitle: 'Authentication',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="lock-closed" size={size} color={color} />
+            ),
+          }}
+        />
+      )}
       <Tabs.Screen
         name="profile"
-        options={isAuthenticated ? {
+        options={{
           title: 'Profile',
           headerTitle: 'My Profile',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person" size={size} color={color} />
           ),
-        } :  {href:null}}
+          tabBarButton: !isAuthenticated ? () => null : undefined,
+        }}
       />
       <Tabs.Screen
         name="cart"
@@ -56,31 +73,29 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="cart" size={size} color={color} />
           ),
+          tabBarButton: !isAuthenticated ? () => null : undefined,
         }}
       />
       <Tabs.Screen
         name="orders"
-        options={ isAuthenticated ? {
-          title: 'Orders',
-          headerTitle: 'Your Orders',
+        options={{
+          title: 'Commandes',
+          headerTitle: 'Mes Commandes',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="list" size={size} color={color} />
           ),
-        } :  {href:null}}
-      />    
-      
+          tabBarButton: !isAuthenticated ? () => null : undefined,
+        }}
+      />
       <Tabs.Screen
-        name="auth"
+        name="restaurants"
         options={{
-          headerShown: true,
-          headerStyle: {
-            backgroundColor: Colors.light.primary,
-          },
-          title: 'Auth',
-          headerTitle: 'Authentication',
+          title: 'Restaurants',
+          headerTitle: 'Nos Restaurants',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="lock-closed" size={size} color={color} />
+            <Ionicons name="restaurant-outline" size={size} color={color} />
           ),
+          tabBarButton: !isAuthenticated ? () => null : undefined,
         }}
       />
       <Tabs.Screen

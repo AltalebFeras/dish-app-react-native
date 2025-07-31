@@ -1,3 +1,4 @@
+import { AuthProvider } from '@/context/AuthContext';
 import { Stack } from "expo-router";
 import { View } from "react-native";
 import { RootSiblingParent } from 'react-native-root-siblings';
@@ -7,6 +8,7 @@ import { CartProvider } from "../providers/CartProvider";
 export default function RootLayout() {
   return (
     <RootSiblingParent>
+      <AuthProvider>
       <CartProvider>  
     <Stack screenOptions={{ headerShown: false }}>
 
@@ -27,6 +29,7 @@ export default function RootLayout() {
       />
     </Stack>
       </CartProvider>
+      </AuthProvider>
   </RootSiblingParent>
 
   );
