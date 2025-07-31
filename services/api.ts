@@ -64,6 +64,27 @@ export const dishesApi = {
     const res = await fetch("https://simplats-backend-main-854o9w.laravel.cloud/api/restaurants/mine", { headers });
     if (!res.ok) throw new Error("Failed to fetch your restaurants");
     return await res.json();
-  }
+  },
+
+  async addDishToRestaurant(restaurantId: number | string, dish: any) {
+    const token = await AsyncStorage.getItem("token");
+    if (!token) throw new Error("Not authenticated");
+    const headers: Record<string, string> = {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+    const res = await fetch(
+      `https://simplats-backend-main-854o9w.laravel.cloud/api/restaurants/${restaurantId}/dishes`,
+      {
+        method: "POST",
+        headers,
+        body: JSON.stringify(dish),
+      }
+    );
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || "Failed to add dish");
+    return data;
+  },
 };
 
