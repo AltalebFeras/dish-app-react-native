@@ -1,5 +1,6 @@
 import { Colors } from "@/constants/Colors";
 import { dishesApi } from "@/services/api";
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
     ActivityIndicator,
@@ -82,6 +83,7 @@ export default function MyRestaurantsScreen() {
   const [showForm, setShowForm] = useState(false);
   const [selectedRestaurantId, setSelectedRestaurantId] = useState<number | null>(null);
   const [apiMessage, setApiMessage] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -128,6 +130,10 @@ export default function MyRestaurantsScreen() {
 
   return (
     <View style={styles.container}>
+      {/* Back Button */}
+      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <Text style={styles.backButtonText}>{"< Back"}</Text>
+      </TouchableOpacity>
       <Text style={styles.header}>My Restaurants</Text>
       {apiMessage && <Text style={styles.apiMessage}>{apiMessage}</Text>}
       <FlatList
@@ -270,5 +276,18 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginVertical: 8,
     fontWeight: "bold",
+  },
+  backButton: {
+    alignSelf: "flex-start",
+    marginBottom: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    backgroundColor: Colors.light.primaryLight,
+    borderRadius: 6,
+  },
+  backButtonText: {
+    color: Colors.light.primary,
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });
