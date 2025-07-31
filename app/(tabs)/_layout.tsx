@@ -38,7 +38,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      {!isAuthenticated && (
+      {/* {!isAuthenticated && ( */}
         <Tabs.Screen
           name="auth"
           options={{
@@ -53,7 +53,7 @@ export default function TabLayout() {
             ),
           }}
         />
-      )}
+      {/* )} */}
       <Tabs.Screen
         name="profile"
         options={{
