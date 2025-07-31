@@ -1,8 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Button, ScrollView, StyleSheet, Text, View } from "react-native";
 
 type UserProfile = {
   id: number;
@@ -20,6 +20,7 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const router = useRouter();
 
   // Helper to check token and fetch profile
   const checkAndFetchProfile = useCallback(async () => {
@@ -109,6 +110,7 @@ export default function Profile() {
       <Text style={styles.label}>Updated At: <Text style={styles.value}>{new Date(profile.updated_at).toLocaleString()}</Text></Text>
       <Text style={styles.label}>Restaurants: <Text style={styles.value}>{profile.restaurants.length}</Text></Text>
       <Text style={styles.label}>Orders: <Text style={styles.value}>{profile.orders.length}</Text></Text>
+      <Button title="My Restaurants" onPress={() => router.push("/my-restaurants")} />
     </ScrollView>
   );
 }

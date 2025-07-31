@@ -52,6 +52,18 @@ export const dishesApi = {
     const res = await fetch(`${API_BASE_URL}/restaurants/${id}`, { headers });
     if (!res.ok) throw new Error("Failed to fetch restaurant detail");
     return await res.json();
+  },
+
+  async fetchMyRestaurants() {
+    const token = await AsyncStorage.getItem("token");
+    if (!token) throw new Error("Not authenticated");
+    const headers: Record<string, string> = {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+    const res = await fetch("https://simplats-backend-main-854o9w.laravel.cloud/api/restaurants/mine", { headers });
+    if (!res.ok) throw new Error("Failed to fetch your restaurants");
+    return await res.json();
   }
 };
 
