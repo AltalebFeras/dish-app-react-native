@@ -1,15 +1,21 @@
 export interface Dish {
-  id: string;
+  id: string | number;
   name: string;
+  slug?: string;
   category: string;
   description: string;
   price: {
     amount: number;
     currency: string;
   };
-  thumbnailUrl: string;
+  restaurant_id?: number;
+  restaurant_name?: string;
+  restaurant_link?: string;
+  thumbnailUrl: string | null;
   images: string[];
   ingredients: string[];
+  created_at?: string;
+  updated_at?: string;
 }
 
 export type CartItem = {

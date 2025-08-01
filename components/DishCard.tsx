@@ -10,11 +10,9 @@ type Props = {
 
 export default function DishCard({ dish }: Props) {
   const { addToCart, getQuantity } = useCartContext();
-  // Use cart quantity as initial value
-  const cartQuantity = getQuantity(dish.id);
+  const cartQuantity = getQuantity(dish.id.toString());
   const [quantity, setQuantity] = useState(cartQuantity || 1);
 
-  // Sync local quantity with cart quantity if cart changes
   useEffect(() => {
     setQuantity(cartQuantity || 1);
   }, [cartQuantity]);
@@ -25,12 +23,16 @@ export default function DishCard({ dish }: Props) {
   const handleAddToCart = () => {
     addToCart(dish, quantity);
     Toast.show("Plat ajouté au panier", { duration: Toast.durations.SHORT, position: Toast.positions.BOTTOM });
-    // No need to reset quantity, keep it in sync with cart
   };
 
   return (
     <View style={styles.card}>
-      <Image source={{ uri: dish.thumbnailUrl }} style={styles.image} />
+      {(dish.thumbnailUrl || (dish.images && dish.images.length > 0)) && (
+        <Image 
+          source={{ uri: dish.thumbnailUrl || dish.images[0] }} 
+          style={styles.image} 
+        />
+      )}
       <Text style={styles.title}>{dish.name}</Text>
       <Text style={styles.category}>{dish.category}</Text>
       <Text style={styles.price}>
@@ -65,8 +67,14 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     elevation: 2,
-    // Replace shadow props with boxShadow
-    boxShadow: '0px 2px 4px rgba(0,0,0,0.2)',
+    // Remove boxShadow and use proper React Native shadow properties
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
   },
   image: {
     width: "100%",

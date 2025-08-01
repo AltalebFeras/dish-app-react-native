@@ -32,33 +32,31 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Dishes',
+          title: 'Plats',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="restaurant" size={size} color={color} />
           ),
         }}
       />
-      {/* {!isAuthenticated && ( */}
-        <Tabs.Screen
-          name="auth"
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Colors.light.primary,
-            },
-            title: 'Auth',
-            headerTitle: 'Authentication',
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="lock-closed" size={size} color={color} />
-            ),
-          }}
-        />
-      {/* )} */}
+      <Tabs.Screen
+        name="auth"
+        options={{
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: Colors.light.primary,
+          },
+          title: 'Connexion',
+          headerTitle: 'Authentification',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="lock-closed" size={size} color={color} />
+          ),
+        }}
+      />
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Profile',
-          headerTitle: 'My Profile',
+          title: 'Profil',
+          headerTitle: 'Mon Profil',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person" size={size} color={color} />
           ),
@@ -96,20 +94,6 @@ export default function TabLayout() {
             <Ionicons name="restaurant-outline" size={size} color={color} />
           ),
           tabBarButton: !isAuthenticated ? () => null : undefined,
-        }}
-      />
-      <Tabs.Screen
-        name="DishDetail"
-        options={{
-          headerShown: true,
-          headerStyle: {
-            backgroundColor: Colors.light.primary,
-          },
-          headerTintColor: Colors.light.textWhite,
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-          tabBarButton: () => null, // Hide from tab bar
         }}
       />
     </Tabs>

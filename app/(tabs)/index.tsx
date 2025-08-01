@@ -1,3 +1,5 @@
+import { Colors } from "@/constants/Colors";
+import { Dish } from "@/types/dish";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -9,12 +11,8 @@ import {
   TextInput, TouchableOpacity,
   View,
 } from "react-native";
-
-import { Colors } from "@/constants/Colors";
-import { Dish } from "@/types/dish";
 import DishCard from "../../components/DishCard";
 import { dishesApi } from "../../services/api";
-
 
 export default function Index() {
   const [dishes, setDishes] = useState<Dish[]>([]);
@@ -64,7 +62,7 @@ export default function Index() {
     return (
       <View style={styles.centered}>
         <ActivityIndicator size="large" color={Colors.light.primary}/>
-        <Text style={styles.loadingText}>Loading dishes...</Text>
+        <Text style={styles.loadingText}>Chargement des plats...</Text>
       </View>
     );
   }
@@ -82,7 +80,7 @@ export default function Index() {
       {/* Search Bar */}
       <TextInput
         style={styles.searchBar}
-        placeholder="Search dishes or categories..."
+        placeholder="Rechercher des plats ou des catégories..."
         value={searchQuery}
         onChangeText={setSearchQuery}
         autoCorrect={false}
@@ -90,13 +88,12 @@ export default function Index() {
         clearButtonMode="while-editing"
       />
 
-      {/* Category Filter */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll} contentContainerStyle={styles.categoryContainer}>
         <TouchableOpacity
           style={[styles.categoryButton, !selectedCategory && styles.categoryButtonSelected]}
           onPress={() => setSelectedCategory(null)}
         >
-          <Text style={[styles.categoryText, !selectedCategory && styles.categoryTextSelected]}>All</Text>
+          <Text style={[styles.categoryText, !selectedCategory && styles.categoryTextSelected]}>Tous</Text>
         </TouchableOpacity>
         {categories.map(category => (
           <TouchableOpacity
@@ -115,7 +112,7 @@ export default function Index() {
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContainer}
-        ListEmptyComponent={<Text style={styles.emptyText}>No dishes found.</Text>}
+        ListEmptyComponent={<Text style={styles.emptyText}>Aucun plat trouvé.</Text>}
       />
     </View>
   );

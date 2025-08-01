@@ -1,17 +1,18 @@
+import ScreenLayout from "@/components/ScreenLayout";
 import { Colors } from "@/constants/Colors";
 import { dishesApi } from "@/services/api";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    FlatList,
-    Modal,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  FlatList,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 function AddDishForm({ restaurantId, onSuccess, onClose }: { restaurantId: number, onSuccess: (msg: string) => void, onClose: () => void }) {
@@ -54,22 +55,22 @@ function AddDishForm({ restaurantId, onSuccess, onClose }: { restaurantId: numbe
 
   return (
     <ScrollView contentContainerStyle={styles.formContainer}>
-      <Text style={styles.formTitle}>Add Dish</Text>
-      <TextInput style={styles.input} placeholder="Name" value={name} onChangeText={setName} />
-      <TextInput style={styles.input} placeholder="Category" value={category} onChangeText={setCategory} />
+      <Text style={styles.formTitle}>Ajouter un Plat</Text>
+      <TextInput style={styles.input} placeholder="Nom" value={name} onChangeText={setName} />
+      <TextInput style={styles.input} placeholder="Catégorie" value={category} onChangeText={setCategory} />
       <TextInput style={styles.input} placeholder="Description" value={description} onChangeText={setDescription} multiline />
-      <TextInput style={styles.input} placeholder="Thumbnail URL" value={thumbnailUrl} onChangeText={setThumbnailUrl} />
-      <TextInput style={styles.input} placeholder="Price (amount)" value={amount} onChangeText={setAmount} keyboardType="decimal-pad" />
-      <TextInput style={styles.input} placeholder="Currency" value={currency} onChangeText={setCurrency} />
-      <TextInput style={styles.input} placeholder="Ingredients (comma separated)" value={ingredients} onChangeText={setIngredients} />
-      <TextInput style={styles.input} placeholder="Images (comma separated URLs)" value={images} onChangeText={setImages} />
+      <TextInput style={styles.input} placeholder="URL de l'image" value={thumbnailUrl} onChangeText={setThumbnailUrl} />
+      <TextInput style={styles.input} placeholder="Prix (montant)" value={amount} onChangeText={setAmount} keyboardType="decimal-pad" />
+      <TextInput style={styles.input} placeholder="Devise" value={currency} onChangeText={setCurrency} />
+      <TextInput style={styles.input} placeholder="Ingrédients (séparés par des virgules)" value={ingredients} onChangeText={setIngredients} />
+      <TextInput style={styles.input} placeholder="Images (URLs séparées par des virgules)" value={images} onChangeText={setImages} />
       {apiMessage && <Text style={styles.apiMessage}>{apiMessage}</Text>}
       <View style={{ flexDirection: "row", marginTop: 12 }}>
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit} disabled={loading}>
-          <Text style={styles.submitButtonText}>{loading ? "Adding..." : "Add Dish"}</Text>
+          <Text style={styles.submitButtonText}>{loading ? "Ajout..." : "Ajouter le Plat"}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.cancelButton} onPress={onClose} disabled={loading}>
-          <Text style={styles.cancelButtonText}>Cancel</Text>
+          <Text style={styles.cancelButtonText}>Annuler</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -113,28 +114,27 @@ export default function MyRestaurantsScreen() {
 
   if (loading) {
     return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color={Colors.light.primary} />
-        <Text style={styles.loadingText}>Loading your restaurants...</Text>
-      </View>
+      <ScreenLayout title="Chargement..." showBackButton>
+        <View style={styles.centered}>
+          <ActivityIndicator size="large" color={Colors.light.primary} />
+          <Text style={styles.loadingText}>Chargement de vos restaurants...</Text>
+        </View>
+      </ScreenLayout>
     );
   }
 
   if (error) {
     return (
-      <View style={styles.centered}>
-        <Text style={styles.error}>{error}</Text>
-      </View>
+      <ScreenLayout title="Erreur" showBackButton>
+        <View style={styles.centered}>
+          <Text style={styles.error}>{error}</Text>
+        </View>
+      </ScreenLayout>
     );
   }
 
   return (
-    <View style={styles.container}>
-      {/* Back Button */}
-      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-        <Text style={styles.backButtonText}>{"< Back"}</Text>
-      </TouchableOpacity>
-      <Text style={styles.header}>My Restaurants</Text>
+    <ScreenLayout title="Mes Restaurants" showBackButton scrollable={false}>
       {apiMessage && <Text style={styles.apiMessage}>{apiMessage}</Text>}
       <FlatList
         data={restaurants}
@@ -144,7 +144,7 @@ export default function MyRestaurantsScreen() {
             <Text style={styles.title}>{item.name}</Text>
             <Text style={styles.address}>{item.address}</Text>
             <Text style={styles.description}>{item.description}</Text>
-            <Text style={styles.label}>Members:</Text>
+            <Text style={styles.label}>Membres:</Text>
             {Array.isArray(item.members) && item.members.length > 0 ? (
               item.members.map((member: any, idx: number) => (
                 <Text key={idx} style={styles.member}>
@@ -152,17 +152,31 @@ export default function MyRestaurantsScreen() {
                 </Text>
               ))
             ) : (
-              <Text style={styles.member}>No members listed.</Text>
+              <Text style={styles.member}>Aucun membre listé.</Text>
             )}
-            <TouchableOpacity
-              style={styles.addDishButton}
-              onPress={() => handleAddDish(item.id)}
-            >
-              <Text style={styles.addDishButtonText}>Add Dish</Text>
-            </TouchableOpacity>
+            <View style={styles.buttonRow}>
+              <TouchableOpacity
+                style={styles.viewDishesButton}
+                onPress={() => router.push({
+                  pathname: "/my-restaurant-dishes",
+                  params: {
+                    restaurantId: item.id.toString(),
+                    restaurantName: item.name,
+                  },
+                })}
+              >
+                <Text style={styles.viewDishesButtonText}>Voir les Plats</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.addDishButton}
+                onPress={() => handleAddDish(item.id)}
+              >
+                <Text style={styles.addDishButtonText}>Ajouter un Plat</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         )}
-        ListEmptyComponent={<Text style={styles.emptyText}>No restaurants found.</Text>}
+        ListEmptyComponent={<Text style={styles.emptyText}>Aucun restaurant trouvé.</Text>}
         contentContainerStyle={styles.listContainer}
       />
       <Modal visible={showForm} animationType="slide" transparent>
@@ -178,7 +192,7 @@ export default function MyRestaurantsScreen() {
           </View>
         </View>
       </Modal>
-    </View>
+    </ScreenLayout>
   );
 }
 
@@ -202,8 +216,25 @@ const styles = StyleSheet.create({
   loadingText: { marginTop: 10, fontSize: 16, color: Colors.light.textSecondary },
   error: { fontSize: 16, color: Colors.light.error, textAlign: "center" },
   emptyText: { textAlign: "center", color: Colors.light.textSecondary, fontSize: 16, marginTop: 32 },
-  addDishButton: {
+  buttonRow: {
+    flexDirection: "row",
     marginTop: 12,
+    gap: 8,
+  },
+  viewDishesButton: {
+    flex: 1,
+    backgroundColor: Colors.light.primaryLight,
+    padding: 10,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  viewDishesButtonText: {
+    color: Colors.light.primary,
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  addDishButton: {
+    flex: 1,
     backgroundColor: Colors.light.primary,
     padding: 10,
     borderRadius: 8,

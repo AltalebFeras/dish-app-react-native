@@ -21,11 +21,17 @@ export const dishesApi = {
 
   async getDishById(id: string): Promise<Dish> {
     try {
-      const response = await fetch(`${API_BASE_URL}/dishes/${id}`);
+      const response = await fetch(`${API_BASE_URL}/dishes/${id}`, {
+        headers: {
+          'Accept': 'application/json',
+        },
+      });
       if (!response.ok) {
         throw new Error('Failed to fetch dish');
       }
-      return await response.json();
+      const json = await response.json();
+      // The dish data is nested under 'data' property
+      return json.data;
     } catch (error) {
       console.error('Error fetching dish:', error);
       throw error;
@@ -85,6 +91,21 @@ export const dishesApi = {
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || "Failed to add dish");
     return data;
+  },
+
+  async fetchRestaurantDishes(restaurantId: number | string) {
+    const token = await AsyncStorage.getItem("token");
+    if (!token) throw new Error("Not authenticated");
+    const headers: Record<string, string> = {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+    const res = await fetch(
+      `https://simplats-backend-main-854o9w.laravel.cloud/api/restaurants/${restaurantId}/dishes`,
+      { headers }
+    );
+    if (!res.ok) throw new Error("Failed to fetch restaurant dishes");
+    return await res.json();
   },
 };
 

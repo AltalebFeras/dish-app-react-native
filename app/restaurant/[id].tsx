@@ -6,7 +6,6 @@ import React, { useEffect, useState } from "react";
 import {
     ActivityIndicator,
     FlatList,
-    Pressable,
     ScrollView,
     StyleSheet,
     Text,
@@ -34,7 +33,7 @@ export default function RestaurantDetailScreen() {
         if (err instanceof Error) {
           setError(err.message);
         } else {
-          setError("An unknown error occurred");
+          setError("Une erreur inconnue s'est produite");
         }
       } finally {
         setLoading(false);
@@ -47,7 +46,7 @@ export default function RestaurantDetailScreen() {
     return (
       <View style={styles.centered}>
         <ActivityIndicator size="large" color={Colors.light.primary} />
-        <Text style={styles.loadingText}>Loading restaurant...</Text>
+        <Text style={styles.loadingText}>Chargement du restaurant...</Text>
       </View>
     );
   if (error)
@@ -59,7 +58,7 @@ export default function RestaurantDetailScreen() {
   if (!restaurant)
     return (
       <View style={styles.centered}>
-        <Text style={styles.error}>Restaurant not found.</Text>
+        <Text style={styles.error}>Restaurant non trouvé.</Text>
       </View>
     );
 
@@ -75,24 +74,30 @@ export default function RestaurantDetailScreen() {
   });
 
   const renderDishItem = ({ item }: { item: any }) => (
-    <View style={styles.dishCard}>
-      <Text style={styles.dishTitle}>{item.name}</Text>
-      <Text style={styles.dishCategory}>{item.category}</Text>
-      <Text style={styles.dishDescription}>{item.description}</Text>
-    </View>
+    <TouchableOpacity onPress={() => router.push(`/DishDetail?id=${item.id}`)}>
+      <View style={styles.dishCard}>
+        <Text style={styles.dishTitle}>{item.name}</Text>
+        <Text style={styles.dishCategory}>{item.category}</Text>
+        <Text style={styles.dishDescription}>{item.description}</Text>
+        <Text style={styles.dishPrice}>
+          {item.price?.amount} {item.price?.currency}
+        </Text>
+      </View>
+    </TouchableOpacity>
   );
 
   return (
     <View style={styles.layoutContainer}>
       {/* Header with back button */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.backButton}>
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color={Colors.light.textWhite} />
-        </Pressable>
+        </TouchableOpacity>
         <Text style={styles.headerTitle} numberOfLines={1}>
           {restaurant.name}
         </Text>
       </View>
+      
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.address}>{restaurant.address}</Text>
         <Text style={styles.description}>{restaurant.description}</Text>
@@ -100,7 +105,7 @@ export default function RestaurantDetailScreen() {
         {/* Search Bar */}
         <TextInput
           style={styles.searchBar}
-          placeholder="Search dishes or categories..."
+          placeholder="Rechercher des plats ou des catégories..."
           value={searchQuery}
           onChangeText={setSearchQuery}
           autoCorrect={false}
@@ -119,10 +124,10 @@ export default function RestaurantDetailScreen() {
             style={[styles.categoryButton, !selectedCategory && styles.categoryButtonSelected]}
             onPress={() => setSelectedCategory(null)}
           >
-            <Text style={[styles.categoryText, !selectedCategory && styles.categoryTextSelected]}>All</Text>
+            <Text style={[styles.categoryText, !selectedCategory && styles.categoryTextSelected]}>Tous</Text>
           </TouchableOpacity>
           {categories.map((category) => {
-            const cat = typeof category === "string" ? category : String(category ?? "Other");
+            const cat = typeof category === "string" ? category : String(category ?? "Autre");
             return (
               <TouchableOpacity
                 key={cat}
@@ -145,12 +150,12 @@ export default function RestaurantDetailScreen() {
           })}
         </ScrollView>
 
-        <Text style={styles.sectionTitle}>Dishes:</Text>
+        <Text style={styles.sectionTitle}>Plats :</Text>
         <FlatList
           data={filteredDishes}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderDishItem}
-          ListEmptyComponent={<Text style={styles.emptyText}>No dishes found.</Text>}
+          ListEmptyComponent={<Text style={styles.emptyText}>Aucun plat trouvé.</Text>}
           scrollEnabled={false}
           contentContainerStyle={styles.listContainer}
         />
@@ -186,10 +191,6 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
     backgroundColor: Colors.light.background,
-  },
-  title: {
-    fontWeight: "bold",
-    fontSize: 22,
   },
   address: {
     color: "#666",
@@ -256,18 +257,31 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 16,
     elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   dishTitle: {
     fontWeight: "bold",
     fontSize: 16,
+    color: Colors.light.text,
   },
   dishCategory: {
-    color: "#666",
+    color: Colors.light.textSecondary,
     marginTop: 2,
   },
   dishDescription: {
-    color: "#888",
+    color: Colors.light.textSecondary,
     marginTop: 2,
+  },
+  dishPrice: {
+    color: Colors.light.primary,
+    fontWeight: "bold",
+    marginTop: 4,
   },
   centered: {
     flex: 1,
