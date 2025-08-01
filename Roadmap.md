@@ -2,14 +2,9 @@
 
 Ce document permet de garder une trace claire de vos intentions, avancements, difficultés et priorités.
 
-
-
 ## 🎯 Objectif du projet
 
-Décrivez en quelques lignes ce que vous souhaitez réaliser.  
-Expliquez le  ce que vous avez envisager au niveau de l'interface est pourquoi ce choix.
-
-> <Your text here>
+Développer une application mobile de livraison de repas permettant aux utilisateurs de commander des plats depuis différents restaurants. L'interface privilégie une navigation intuitive avec des écrans de listes clairs, des fiches détaillées pour chaque plat et restaurant, et un processus de commande simplifié. Ce choix d'interface vise à offrir une expérience utilisateur fluide et familière, similaire aux applications de livraison populaires.
 
 ---
 
@@ -35,19 +30,24 @@ Expliquez le  ce que vous avez envisager au niveau de l'interface est pourquoi c
 
 - Gestion de l'état des commandes reçu dans votre restaurant
 
-
-
 ---
 
 ## 🚧 État d'avancement
 
 Renseignez toutes les fonctionnalités et leur état d'avancement. Vous pouver  en ajouter d'autres si vous avez dévelopé des choses spéciales.
 
-| Fonctionnalité        | État | Commentaire                                     |
-| --------------------- | ---- | ----------------------------------------------- |
-| Authentification      | ✅    | Login + Register                                |
-| Liste des restaurants | 🔧   | Liste uniquement, pas de détails                |
-| Création de commande  | ⏳    | Prévu dans la dernière semaine de développement |
+| Fonctionnalité                    | État | Commentaire                                     |
+| --------------------------------- | ---- | ----------------------------------------------- |
+| Authentification                  | ✅    | Login + Register                                |
+| Liste des restaurants             | 🔧   | Liste uniquement, pas de détails                |
+| Liste des plats                   | 🔧   | Affichage basique, manque filtres               |
+| Fiche détails d'un plat          | ⏳    | Maquette terminée, développement à venir        |
+| Détails d'un restaurant          | ⏳    | Dépendant de l'API restaurants                  |
+| Connexion à l'API                 | 🔧   | API de mock fonctionnelle, migration vers prod |
+| Création de plats (restaurateur)  | ⏳    | Fonctionnalité avancée, priorité basse         |
+| Gestion du panier                 | ⏳    | Stockage local prévu avec AsyncStorage         |
+| Création de commande              | ⏳    | Prévu dans la dernière semaine de développement |
+| Gestion état commandes reçues     | ⏳    | Interface restaurateur à développer            |
 
 Légende :
 
@@ -63,9 +63,10 @@ Listez les blocages techniques ou organisationnels rencontrés, et comment vous 
 
 | Problème | Impact | Solution mise en place ou envisagée |
 | -------- | ------ | ----------------------------------- |
-|          |        |                                     |
-|          |        |                                     |
-|          |        |                                     |
+| Configuration de l'environnement React Native | Élevé | Utilisation d'Expo CLI pour simplifier le setup |
+| Gestion d'état complexe avec le panier | Moyen | Implémentation de Context API ou Redux Toolkit |
+| Performance des listes avec beaucoup d'éléments | Moyen | Utilisation de FlatList avec optimisations |
+| Authentification sécurisée | Élevé | tokens + stockage sécurisé |
 
 ---
 
@@ -73,13 +74,13 @@ Listez les blocages techniques ou organisationnels rencontrés, et comment vous 
 
 Expliquez ici ce que vous envisagez pour la suite des fonctionnalités.
 
-Exemple :
-
-- Implémentation de la gestion des profils utilisateurs
-- Ajouter une animation de transition entre les écrans
-- Finaliser les tests sur la fonctionnalité de recherche
-
-
+- Finaliser l'intégration de l'API de production
+- Implémenter la gestion complète du panier avec persistance
+- Développer les écrans de détails (plats et restaurants)
+- Ajouter un système de notation et commentaires
+- Intégrer les notifications push pour le suivi des commandes
+- Optimiser les performances et ajouter des animations de transition
+- Tests utilisateurs et corrections des bugs identifiés
 
 ---
 
@@ -87,12 +88,10 @@ Exemple :
 
 Notes, idées, feedback des utilisateurs, ou tout commentaire général utile au suivi du projet.
 
-Exemple :
+> Navigation entre les écrans parfois lente - à optimiser avec des transitions plus fluides dans la prochaine itération.
 
-> Le bouton "Ajout au panier est à retravailler" À retravailler dans la prochaine itération.
+> Prévoir un mode sombre pour l'application - demande récurrente des utilisateurs testeurs.
 
-
+> Considérer l'ajout d'un système de favoris pour les plats et restaurants.
 
 ---
-
-
